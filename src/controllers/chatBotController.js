@@ -188,7 +188,7 @@ function handleMessage(sender_psid, message) {
     }else{
        if(entityChosen === "wit$greetings"){
            //send greetings message
-           callSendAPI(sender_psid,'Hi there! I am Deve! A DevC bot, how my I help you?');
+           callSendAPI(sender_psid,'Hi there! I am Deve! A DevC bot, how may I help you?');
        }
        if(entityChosen === "wit$thanks"){
            //send thanks message
@@ -199,6 +199,51 @@ function handleMessage(sender_psid, message) {
             callSendAPI(sender_psid,'bye-bye!');
         }
     }
+
+    let callSendAPIWithTemplate = (sender_psid) => {
+        // document fb message template
+        // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
+        let body = {
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "generic",
+                        "elements": [
+                            {
+                                "title": "Want to build sth awesome?",
+                                "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
+                                "subtitle": "Watch more videos on my youtube channel ^^",
+                                "buttons": [
+                                    {
+                                        "type": "web_url",
+                                        "url": "https://bit.ly/subscribe-haryphamdev",
+                                        "title": "Watch now"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+    
+        request({
+            "uri": "https://graph.facebook.com/v6.0/me/messages",
+            "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+            "method": "POST",
+            "json": body
+        }, (err, res, body) => {
+            if (!err) {
+                // console.log('message sent!')
+            } else {
+                console.error("Unable to send message:" + err);
+            }
+        });
+    };
 }
 
 module.exports = {
