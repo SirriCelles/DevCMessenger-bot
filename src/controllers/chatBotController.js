@@ -1,5 +1,9 @@
+'use strict';
 require("dotenv").config();
 import request from "request";
+
+let data = require('../controllers/response.json');
+
 
 let postWebhook = (req, res) =>{
     // Parse the request body from the POST
@@ -122,13 +126,25 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "Thanks!" }
+    response = { "text": yes_res }
   } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
+    response = { "text": no_res }
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
 
+}
+
+function handleResponse(sender_psid, response, yes_res, no_res) {
+    let result
+    // Set the response based on the postback payload
+  if (response === 'yes') {
+    result = { "text": yes_res }
+  } else if (response=== 'no') {
+    result = { "text": no_res }
+  }
+
+  callSendAPI(sender_psid, result);
 }
 
 // Sends response messages via the Send API
@@ -168,7 +184,7 @@ function handleMessage(sender_psid, message) {
     // id like button: sticker_id 369239263222822
 
     if( message && message.attachments && message.attachments[0].payload){
-        callSendAPI(sender_psid, "Thank you !!!");
+        callSendAPI(sender_psid, data.thank_you);
         callSendAPIWithTemplate(sender_psid);
         return;
     }
@@ -184,11 +200,13 @@ function handleMessage(sender_psid, message) {
 
     if(entityChosen === ""){
         //default
-        callSendAPI(sender_psid,`Hi there! I am Deve! How can I assist You?, try to say "thanks a lot" or "hi" to the bot` );
+        callSendAPI(sender_psid, data.intro_message );
     }else{
        if(entityChosen === "wit$greetings"){
            //send greetings message
-           callSendAPI(sender_psid,'Hi there! I am Deve! A DevC bot, how may I help you?');
+           callSendAPI(sender_psid, data.intro_message);
+           callSendAPI(sender_psid, data.event_update_option);
+           handleResponse(sender_psid, entityChosen, event_update_yes_option_value, event_update_no_option_value);
        }
        if(entityChosen === "wit$thanks"){
            //send thanks message
