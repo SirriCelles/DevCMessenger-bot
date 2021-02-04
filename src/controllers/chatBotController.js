@@ -136,14 +136,34 @@ function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822    
     let res = transform(message.text);
+    const goobyeRes = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [{
+                "title": "Tanks For Visisting",
+                "url": "https://i.gifer.com/4V0f.gif",
+              }]
+            }
+        }
+    }
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
         callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-        callSendAPI(sender_psid, "Please select an option below");
-        setTimeout(() => {callSendAPIList(sender_psid)}, 2000);               
+        setTimeout(() => {callSendAPI(sender_psid, "Please select an option below")},200);
+
+        callSendAPIList(sender_psid);
+        return;
     } 
+
+    if( message && message.attachments && message.attachments[0].payload){
+        callSendAPI(sender_psid, goobyeRes);
+        callSendAPIWithTemplate(sender_psid);
+        return;
+    }
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen = "";
@@ -170,24 +190,7 @@ function handleMessage(sender_psid, message) {
 
     
 
-    // if( message && message.attachments && message.attachments[0].payload){
-    //     callSendAPI(sender_psid, data.thank_you);
-    //     callSendAPIWithTemplate(sender_psid);`
-    //     return;
-    // }
-
-    const goobyeRes = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [{
-                "title": "Tanks For Visisting",
-                "url": "https://i.gifer.com/4V0f.gif",
-              }]
-            }
-        }
-    }
+    
 
         // "message":{
         //     "attachment": {
