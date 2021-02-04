@@ -156,27 +156,15 @@ function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822    
     let res = transform(message.text);
-    const response = {
+    const byeResponse = {
         "attachment": {
           "type": "template",
           "payload": {
             "template_type": "generic",
             "elements": [{
-              "title": "Is this the right picture?",
-              "subtitle": "Tap a button to answer.",
+              "title": "Thanks for visiting!!",
+              "subtitle": "Fairwell till next time",
               "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-              "buttons": [
-                {
-                  "type": "postback",
-                  "title": "Yes!",
-                  "payload": "yes",
-                },
-                {
-                  "type": "postback",
-                  "title": "No!",
-                  "payload": "no",
-                }
-              ],
             }]
           }
         }
@@ -200,14 +188,17 @@ function handleMessage(sender_psid, message) {
         if (entityChosen === "wit$greetings") {
             callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
             setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below")
-            } ,2000);
+                callSendAPI(sender_psid, "Please select an option below");
+                callSendAPIAny(sender_psid, botOptions);
+            } ,3000);
+            
         }
         else if(entityChosen === "wit$thanks"){
             callSendAPI(sender_psid,`You 're welcome!`);
+            callSendAPIAny(sender_psid, godbyeGif);
         }
         else if(entityChosen === "wit$bye"){
-                callSendAPIAny(sender_psid, response);
+                callSendAPIAny(sender_psid, byeRresponse);
         }
         else{
             // default
@@ -221,37 +212,103 @@ function handleMessage(sender_psid, message) {
     //     return;
     // }
 
-    
+    const botOptions = {
+        "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"generic",
+              "elements":[
+                 {
+                  "title":"Welcome!",
+                  "image_url":"https://petersfancybrownhats.com/company_image.png",
+                  "subtitle":"We have the right hat for everyone.",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://petersfancybrownhats.com/view?item=103",
+                    "webview_height_ratio": "tall",
+                  },
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://petersfancybrownhats.com",
+                      "title":"View Website"
+                    },{
+                      "type":"postback",
+                      "title":"Start Chatting",
+                      "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                    }              
+                  ]      
+                },
+                {
+                    "title":"Welcome!",
+                    "image_url":"https://petersfancybrownhats.com/company_image.png",
+                    "subtitle":"We have the right hat for everyone.",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://petersfancybrownhats.com",
+                        "title":"View Website"
+                      },{
+                        "type":"postback",
+                        "title":"Start Chatting",
+                        "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                      }              
+                    ]      
+                },
+                {
+                    "title":"Welcome!",
+                    "image_url":"https://petersfancybrownhats.com/company_image.png",
+                    "subtitle":"We have the right hat for everyone.",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://petersfancybrownhats.com",
+                        "title":"View Website"
+                      },{
+                        "type":"postback",
+                        "title":"Start Chatting",
+                        "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                      }              
+                    ]      
+                  }
 
-    
-    
+              ]
+            }
+        }
+    }
 
+    const godbyeGif = {
+        "attachment": {
+                  "type": "template",
+                  "payload": {
+                     "template_type": "media",
+                     "elements": [
+                        {
+                           "media_type": "video",
+                           "attachment_id": "../public/images/goodbye.gif",
+                           "buttons": [
+                            {
+                               "type": "wtext",
+                               "url": "none",
+                               "title": "Thanks For Visiting!!",
+                            }
+                           ]
+                        }
+                     ]
+                  }
+                }
+    }
 
-    
-
-    
-
-        // "message":{
-        //     "attachment": {
-        //       "type": "template",
-        //       "payload": {
-        //          "template_type": "media",
-        //          "elements": [
-        //             {
-        //                "media_type": "video",
-        //                "attachment_id": "../public/images/goodbye.gif",
-        //                "buttons": [
-        //                 {
-        //                    "type": "wtext",
-        //                    "url": "none",
-        //                    "title": "Thanks For Visiting!!",
-        //                 }
-        //                ]
-        //             }
-        //          ]
-        //       }
-        //     }
-        // }
 
     let callSendAPIList = (sender_psid) => {
         let body = {
