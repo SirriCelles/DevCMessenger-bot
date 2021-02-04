@@ -196,7 +196,7 @@ function handleMessage(sender_psid, message) {
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
         callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?");
-        callSendAPI(sender_psid, "Please select a option below.");
+        callSendAPI(sender_psid, "Please select an option below.");
     } 
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
@@ -216,10 +216,10 @@ function handleMessage(sender_psid, message) {
             //send bye message
             callSendAPI(sender_psid,'Thanks for Visiting!!');
         }
-    else {
-        // default
-        callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select another option from the list");
-    }
+    // else if(entityChosen === "") {
+    //     // default
+    //     callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select another option from the list");
+    // }
 
 
     
