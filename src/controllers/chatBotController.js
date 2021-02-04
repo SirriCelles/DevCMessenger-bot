@@ -183,11 +183,23 @@ function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
+function transform(message) {
+    return message.toLowerCase();
+}
+
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
-    // id like button: sticker_id 369239263222822
+    // id like button: sticker_id 369239263222822    
+    let res = transform(message.text);
 
-    let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
+    const greeting = firstTrait(message.nlp, "wit$greetings");
+    // Specific replies
+    if (greeting && greeting.confidence > 0.8) {
+        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?");
+        callSendAPI(sender_psid, "Please select a option below.");
+    } 
+
+    let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -196,15 +208,7 @@ function handleMessage(sender_psid, message) {
         }
     });
 
-    if(entityChosen === ""){
-        //default
-        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?" );
-    }else if (entityChosen === "wit$greetings") {
-            //send greetings message
-            callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?");
-        }
-
-    else if(entityChosen === "wit$thanks"){
+    if(entityChosen === "wit$thanks"){
            //send thanks message
            callSendAPI(sender_psid,`You 're welcome!`);
        }
@@ -216,6 +220,9 @@ function handleMessage(sender_psid, message) {
         // default
         callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select another option from the list");
     }
+
+
+    
 
     // if( message && message.attachments && message.attachments[0].payload){
     //     callSendAPI(sender_psid, data.thank_you);
