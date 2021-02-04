@@ -1,7 +1,16 @@
-let getLang = (req, res) => {
-    return res.render("response.json");
+function waitAndPrint(callback, time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            callback && callback();
+            resolve();
+        }, time);
+    })
 }
 
+
+
+
+
 module.exports = {
-    getLang: getLang
+    waitAndPrint: waitAndPrint
 }

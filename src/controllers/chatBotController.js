@@ -1,11 +1,14 @@
 'use strict';
 require("dotenv").config();
+import { resolve } from "path";
 import request from "request";
+import {waitAndPrint} from "../controllers/responseController";
+
 
 const fs = require('fs');
-
 let rawdata = fs.readFileSync('response.json');
 let data = JSON.parse(rawdata);
+
 
 
 
@@ -73,53 +76,6 @@ let getWebhook = (req, res) => {
     }
 };
 
-// Handles messages events
-// function handleMessage(sender_psid, received_message) {
-//     let response;
-
-//   // Check if the message contains text
-//   if (received_message.text) {    
-
-//     // Create the payload for a basic text message
-//     response = {
-//       "text": `You sent the message: "${received_message.text}". Now send me an image!`
-//     }
-//   }  else if (received_message.attachments) {
-  
-//     // Gets the URL of the message attachment
-//     let attachment_url = received_message.attachments[0].payload.url;
-//     response = {
-//         "attachment": {
-//           "type": "template",
-//           "payload": {
-//             "template_type": "generic",
-//             "elements": [{
-//               "title": "Is this the right picture?",
-//               "subtitle": "Tap a button to answer.",
-//               "image_url": attachment_url,
-//               "buttons": [
-//                 {
-//                   "type": "postback",
-//                   "title": "Yes!",
-//                   "payload": "yes",
-//                 },
-//                 {
-//                   "type": "postback",
-//                   "title": "No!",
-//                   "payload": "no",
-//                 }
-//               ],
-//             }]
-//           }
-//         }
-//       }
-  
-//   }  
-  
-//   // Sends the response message
-//   callSendAPI(sender_psid, response);
-
-// }
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
@@ -137,18 +93,6 @@ function handlePostback(sender_psid, received_postback) {
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
 
-}
-
-function handleResponse(sender_psid, response, yes_res, no_res) {
-    let result
-    // Set the response based on the postback payload
-  if (response === 'yes') {
-    result = { "text": yes_res }
-  } else if (response=== 'no') {
-    result = { "text": no_res }
-  }
-
-  callSendAPI(sender_psid, result);
 }
 
 // Sends response messages via the Send API
@@ -187,17 +131,37 @@ function transform(message) {
     return message.toLowerCase();
 }
 
+function processWait(values = [], time) {
+    if(values.length > 0) {
+     waitAndPrint(
+         function(){
+             callSendAPI(sender_psid, values[0]);
+             
+         }, time
+     ).then(
+         () => {
+             let temp = [...values];
+
+             processWait(temp.slice(1), time)
+         }
+     )
+    } 
+ }
+
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822    
     let res = transform(message.text);
+    const resValues = [
+        "Hi there! Welcome to DevC Chat page",
+        "I'm Deve! How can I assist You?",
+        "Please select an option below."
+    ];
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
-        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
-        callSendAPI(sender_psid, "I'm Deve! How can I assist You?");
-        callSendAPI(sender_psid, "Please select an option below.");
+        processWait(resValues, 1000);
     } 
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
