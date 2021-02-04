@@ -121,6 +121,27 @@ function callSendAPI(sender_psid, response) {
   
 }
 
+ // Send the HTTP request to the Messenger Platform anyform
+ function callSendAPIAny(sender_psid, response) {
+    let request_body = {
+      "recipient": {
+        "id": sender_psid
+      },
+      "message": response
+    }
+    request({
+      "uri": "https://graph.facebook.com/v2.6/me/messages",
+      "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+      "method": "POST",
+      "json": request_body
+    }, (err, res, body) => {
+      if (!err) {
+        console.log('message sent!')
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    }); 
+  }
 
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
@@ -130,20 +151,12 @@ function transform(message) {
     return message.toLowerCase();
 }
 
-function handleMessage(sender_psid, received_message) {
-    let response;
-    
-    // Checks if the message contains text
-    if (received_message.text) {    
-      // Create the payload for a basic text message, which
-      // will be added to the body of our request to the Send API
-      response = {
-        "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
-      }
-    } else if (received_message.attachments) {
-      // Get the URL of the message attachment
-      let attachment_url = received_message.attachments[0].payload.url;
-      response = {
+
+function handleMessage(sender_psid, message) {
+    //handle message for react, like press like button
+    // id like button: sticker_id 369239263222822    
+    let res = transform(message.text);
+    const response = {
         "attachment": {
           "type": "template",
           "payload": {
@@ -151,7 +164,7 @@ function handleMessage(sender_psid, received_message) {
             "elements": [{
               "title": "Is this the right picture?",
               "subtitle": "Tap a button to answer.",
-              "image_url": attachment_url,
+              "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
               "buttons": [
                 {
                   "type": "postback",
@@ -167,204 +180,177 @@ function handleMessage(sender_psid, received_message) {
             }]
           }
         }
-      }
-    } 
+    }
+
+    // Specific replies
+    if (message.text) {
+        if(message.text === "") {
+            return;
+        }
+        
+        let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+        let entityChosen = "";
+        entitiesArr.forEach((name) => {
+            let entity = firstTrait(message.nlp, name);
+            if (entity && entity.confidence > 0.8) {
+                entityChosen = name;
+            }
+        });
+
+        if (entityChosen === "wit$greetings") {
+            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+            setTimeout(function() {
+                callSendAPI(sender_psid, "Please select an option below")
+            } ,2000);
+        }
+        else if(entityChosen === "wit$thanks"){
+            callSendAPI(sender_psid,`You 're welcome!`);
+        }
+        else if(entityChosen === "wit$bye"){
+                callSendAPIAny(sender_psid, response);
+        }
+        else{
+            // default
+            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
+        }
+
+    }
+    // if( message && message.attachments && message.attachments[0].payload){
+    //     callSendAPI(sender_psid, goobyeRes);
+    //     callSendAPIWithTemplate(sender_psid);
+    //     return;
+    // }
+
     
-    // Send the response message
-    callSendAPI(sender_psid, response);    
-  }
 
-
-
-// function handleMessage(sender_psid, message) {
-//     //handle message for react, like press like button
-//     // id like button: sticker_id 369239263222822    
-//     let res = transform(message.text);
-//     const greeting = firstTrait(message.nlp, "wit$greetings");
-//     const goobyeRes = {
-//         "attachment": {
-//             "type": "template",
-//             "payload": {
-//               "template_type": "generic",
-//               "elements": [{
-//                 "title": "Tanks For Visisting",
-//                 "url": "https://i.gifer.com/4V0f.gif",
-//               }]
-//             }
-//         }
-//     }
-
-//     // Specific replies
-//     if(message.text === "") {
-//         return;
-//     }
-
-//     if (greeting && greeting.confidence > 0.8) {
-//         callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-//         setTimeout(function() {
-//             callSendAPI(sender_psid, "Please select an option below")
-//         } ,2000);
-//         callSendAPIList(sender_psid);
-
-//         setTimeout(function() {
-//             callSendAPIList(sender_psid)
-//         }, 4000);
-
-//         setTimeout(function() {
-//             callSendAPIWithTemplate(sender_psid)
-//         }, 7000);
-//     } 
-//     // if( message && message.attachments && message.attachments[0].payload){
-//     //     callSendAPI(sender_psid, goobyeRes);
-//     //     callSendAPIWithTemplate(sender_psid);
-//     //     return;
-//     // }
-
-//     let entitiesArr = ["wit$thanks", "wit$bye" ];
-//     let entityChosen = "";
-//     entitiesArr.forEach((name) => {
-//         let entity = firstTrait(message.nlp, name);
-//         if (entity && entity.confidence > 0.8) {
-//             entityChosen = name;
-//         }
-//     });
-
-//     if(entityChosen === "wit$thanks"){
-//            callSendAPI(sender_psid,`You 're welcome!`);
-//        }
-//     else if(entityChosen === "wit$bye"){
-//             callSendAPI(sender_psid, goobyeRes);
-//         }
-//     // else if(entityChosen === "") {
-//     //     // default
-//     //     callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select another option from the list");
-//     // }
+    
+    
 
 
     
 
     
 
-//         // "message":{
-//         //     "attachment": {
-//         //       "type": "template",
-//         //       "payload": {
-//         //          "template_type": "media",
-//         //          "elements": [
-//         //             {
-//         //                "media_type": "video",
-//         //                "attachment_id": "../public/images/goodbye.gif",
-//         //                "buttons": [
-//         //                 {
-//         //                    "type": "wtext",
-//         //                    "url": "none",
-//         //                    "title": "Thanks For Visiting!!",
-//         //                 }
-//         //                ]
-//         //             }
-//         //          ]
-//         //       }
-//         //     }
-//         // }
+        // "message":{
+        //     "attachment": {
+        //       "type": "template",
+        //       "payload": {
+        //          "template_type": "media",
+        //          "elements": [
+        //             {
+        //                "media_type": "video",
+        //                "attachment_id": "../public/images/goodbye.gif",
+        //                "buttons": [
+        //                 {
+        //                    "type": "wtext",
+        //                    "url": "none",
+        //                    "title": "Thanks For Visiting!!",
+        //                 }
+        //                ]
+        //             }
+        //          ]
+        //       }
+        //     }
+        // }
 
-//     let callSendAPIList = (sender_psid) => {
-//         let body = {
-//             "recipient": {
-//                 "id": sender_psid
-//             },
-//             "message":{
-//                 "attachment":{
-//                   "type":"template",
-//                   "payload":{
-//                     "template_type":"generic",
-//                     "elements":[
-//                        {
-//                         "title":"Welcome!",
-//                         "image_url":"https://petersfancybrownhats.com/company_image.png",
-//                         "subtitle":"We have the right hat for everyone.",
-//                         "default_action": {
-//                           "type": "web_url",
-//                           "url": "https://petersfancybrownhats.com/view?item=103",
-//                           "webview_height_ratio": "tall",
-//                         },
-//                         "buttons":[
-//                           {
-//                             "type":"web_url",
-//                             "url":"https://petersfancybrownhats.com",
-//                             "title":"View Website"
-//                           },{
-//                             "type":"postback",
-//                             "title":"Start Chatting",
-//                             "payload":"DEVELOPER_DEFINED_PAYLOAD"
-//                           }              
-//                         ]      
-//                       }
-//                     ]
-//                   }
-//                 }
-//             }
-//         };
-//         // Send the HTTP request to the Messenger Platform
-//         request({
-//             "uri": "https://graph.facebook.com/v9.0/me/messages",
-//             "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-//             "method": "POST",
-//             "json": request_body
-//         }, (err, res, body) => {
-//             if (!err) {
-//             console.log('message sent!');
-//             console.log(`Message Sent: ${response}`);
-//             } else {
-//             console.error("Unable to send message:" + err);
-//             }
-//         }); 
-//     }
+    let callSendAPIList = (sender_psid) => {
+        let body = {
+            "recipient": {
+                "id": sender_psid
+            },
+            "message":{
+                "attachment":{
+                  "type":"template",
+                  "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                       {
+                        "title":"Welcome!",
+                        "image_url":"https://petersfancybrownhats.com/company_image.png",
+                        "subtitle":"We have the right hat for everyone.",
+                        "default_action": {
+                          "type": "web_url",
+                          "url": "https://petersfancybrownhats.com/view?item=103",
+                          "webview_height_ratio": "tall",
+                        },
+                        "buttons":[
+                          {
+                            "type":"web_url",
+                            "url":"https://petersfancybrownhats.com",
+                            "title":"View Website"
+                          },{
+                            "type":"postback",
+                            "title":"Start Chatting",
+                            "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                          }              
+                        ]      
+                      }
+                    ]
+                  }
+                }
+            }
+        };
+        // Send the HTTP request to the Messenger Platform
+        request({
+            "uri": "https://graph.facebook.com/v9.0/me/messages",
+            "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+            "method": "POST",
+            "json": request_body
+        }, (err, res, body) => {
+            if (!err) {
+            console.log('message sent!');
+            console.log(`Message Sent: ${response}`);
+            } else {
+            console.error("Unable to send message:" + err);
+            }
+        }); 
+    }
 
-//     let callSendAPIWithTemplate = (sender_psid) => {
-//         // document fb message template
-//         // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
-//         let body = {
-//             "recipient": {
-//                 "id": sender_psid
-//             },
-//             "message": {
-//                 "attachment": {
-//                     "type": "template",
-//                     "payload": {
-//                         "template_type": "generic",
-//                         "elements": [
-//                             {
-//                                 "title": "Want to build sth awesome?",
-//                                 "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
-//                                 "subtitle": "Watch more videos on my youtube channel ^^",
-//                                 "buttons": [
-//                                     {
-//                                         "type": "web_url",
-//                                         "url": "https://bit.ly/subscribe-haryphamdev",
-//                                         "title": "Watch now"
-//                                     }
-//                                 ]
-//                             }
-//                         ]
-//                     }
-//                 }
-//             }
-//         };
+    let callSendAPIWithTemplate = (sender_psid) => {
+        // document fb message template
+        // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
+        let body = {
+            "recipient": {
+                "id": sender_psid
+            },
+            "message": {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "generic",
+                        "elements": [
+                            {
+                                "title": "Want to build sth awesome?",
+                                "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
+                                "subtitle": "Watch more videos on my youtube channel ^^",
+                                "buttons": [
+                                    {
+                                        "type": "web_url",
+                                        "url": "https://bit.ly/subscribe-haryphamdev",
+                                        "title": "Watch now"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        };
     
-//         request({
-//             "uri": "https://graph.facebook.com/v6.0/me/messages",
-//             "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-//             "method": "POST",
-//             "json": body
-//         }, (err, res, body) => {
-//             if (!err) {
-//                 // console.log('message sent!')
-//             } else {
-//                 console.error("Unable to send message:" + err);
-//             }
-//         });
-//     };
-// }
+        request({
+            "uri": "https://graph.facebook.com/v6.0/me/messages",
+            "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+            "method": "POST",
+            "json": body
+        }, (err, res, body) => {
+            if (!err) {
+                // console.log('message sent!')
+            } else {
+                console.error("Unable to send message:" + err);
+            }
+        });
+    };
+}
 
 module.exports = {
     postWebhook: postWebhook,
