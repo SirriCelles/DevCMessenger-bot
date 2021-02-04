@@ -183,12 +183,6 @@ function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822
 
-    // if( message && message.attachments && message.attachments[0].payload){
-    //     callSendAPI(sender_psid, data.thank_you);
-    //     callSendAPIWithTemplate(sender_psid);
-    //     return;
-    // }
-
     let entitiesArr = [ "wit$greetings", "wit$thanks", "wit$bye" ];
     let entityChosen = "";
     entitiesArr.forEach((name) => {
@@ -208,6 +202,7 @@ function handleMessage(sender_psid, message) {
            callSendAPI(sender_psid, data.event_update_option);
            handleResponse(sender_psid, entityChosen, event_update_yes_option_value, event_update_no_option_value);
        }
+       break;
        if(entityChosen === "wit$thanks"){
            //send thanks message
            callSendAPI(sender_psid,`You 're welcome!`);
@@ -216,6 +211,12 @@ function handleMessage(sender_psid, message) {
             //send bye message
             callSendAPI(sender_psid,'bye-bye!');
         }
+    }
+
+    if( message && message.attachments && message.attachments[0].payload){
+        callSendAPI(sender_psid, data.thank_you);
+        callSendAPIWithTemplate(sender_psid);
+        return;
     }
 
     let callSendAPIWithTemplate = (sender_psid) => {
