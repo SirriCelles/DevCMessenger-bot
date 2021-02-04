@@ -192,32 +192,48 @@ function handleMessage(sender_psid, message) {
         }
     });
 
-    if(entityChosen === ""){
-        //default
-        callSendAPI(sender_psid, data.intro_message );
-    }else{
-       if(entityChosen === "wit$greetings"){
-           //send greetings message
+    switch (entityChosen) {
+        case (entityChosen === ""): 
+            //default
+            callSendAPI(sender_psid, data.intro_message );
+            break;
+        case (entityChosen === "wit$thanks"):
+            //send greetings message
            callSendAPI(sender_psid, data.intro_message);
            callSendAPI(sender_psid, data.event_update_option);
+           handlePostback(sender_psid, entityChosen);
            handleResponse(sender_psid, entityChosen, event_update_yes_option_value, event_update_no_option_value);
-       }
-       break;
-       if(entityChosen === "wit$thanks"){
-           //send thanks message
-           callSendAPI(sender_psid,`You 're welcome!`);
-       }
-        if(entityChosen === "wit$bye"){
-            //send bye message
-            callSendAPI(sender_psid,'bye-bye!');
-        }
+           break;
+
     }
 
-    if( message && message.attachments && message.attachments[0].payload){
-        callSendAPI(sender_psid, data.thank_you);
-        callSendAPIWithTemplate(sender_psid);
-        return;
-    }
+
+    // if(entityChosen === ""){
+    //     //default
+    //     callSendAPI(sender_psid, data.intro_message );
+    // }else if {
+    //    if{
+    //        //send greetings message
+    //        callSendAPI(sender_psid, data.intro_message);
+    //        callSendAPI(sender_psid, data.event_update_option);
+    //        handleResponse(sender_psid, entityChosen, event_update_yes_option_value, event_update_no_option_value);
+    //    }
+    //    break;
+    //    if(entityChosen === "wit$thanks"){
+    //        //send thanks message
+    //        callSendAPI(sender_psid,`You 're welcome!`);
+    //    }
+    //     if(entityChosen === "wit$bye"){
+    //         //send bye message
+    //         callSendAPI(sender_psid,'bye-bye!');
+    //     }
+    // }
+
+    // if( message && message.attachments && message.attachments[0].payload){
+    //     callSendAPI(sender_psid, data.thank_you);
+    //     callSendAPIWithTemplate(sender_psid);
+    //     return;
+    // }
 
     let callSendAPIWithTemplate = (sender_psid) => {
         // document fb message template
