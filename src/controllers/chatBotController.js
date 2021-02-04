@@ -130,57 +130,19 @@ function transform(message) {
     return message.toLowerCase();
 }
 
-function waitAndPrint(callback, time) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            callback && callback();
-            resolve();
-        }, time);
-    })
-}
 
-function processWait(values = [], time) {
-    if(values.length > 0) {
-     waitAndPrint(
-         function(){
-             callSendAPI(sender_psid, values[0]);
-             
-         }, time
-     ).then(
-         () => {
-             let temp = [...values];
-
-             processWait(temp.slice(1), time)
-         }
-     )
-    } 
- }
 
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822    
     let res = transform(message.text);
-    const resValues = [
-        "Hi there! Welcome to DevC Chat page",
-        "I'm Deve! How can I assist Yo",
-        "Please select an option belo"
-    ];
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
-        
-        setTimeout(() => {
-            callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
-            setTimeout(() => {
-                callSendAPI(sender_psid, "I'm Deve! How can I assist You");
-                setTimeout(() => {
-                    callSendAPI(sender_psid, "Please select an option below")
-                }, 400);
-            }, 400);
-        },1000);
-
-        processWait(resValues, 1000);         
+        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+        callSendAPI(sender_psid, "Please select an option below");
+        setTimeout(() => {callSendAPIList(sender_psid)}, 2000);               
     } 
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
@@ -248,6 +210,45 @@ function handleMessage(sender_psid, message) {
         //       }
         //     }
         // }
+
+    let callSendAPIList = (sender_psid) => {
+        let body = {
+            "recipient": {
+                "id": sender_psid
+            },
+            "message":{
+                "attachment":{
+                  "type":"template",
+                  "payload":{
+                    "template_type":"generic",
+                    "elements":[
+                       {
+                        "title":"Welcome!",
+                        "image_url":"https://petersfancybrownhats.com/company_image.png",
+                        "subtitle":"We have the right hat for everyone.",
+                        "default_action": {
+                          "type": "web_url",
+                          "url": "https://petersfancybrownhats.com/view?item=103",
+                          "webview_height_ratio": "tall",
+                        },
+                        "buttons":[
+                          {
+                            "type":"web_url",
+                            "url":"https://petersfancybrownhats.com",
+                            "title":"View Website"
+                          },{
+                            "type":"postback",
+                            "title":"Start Chatting",
+                            "payload":"DEVELOPER_DEFINED_PAYLOAD"
+                          }              
+                        ]      
+                      }
+                    ]
+                  }
+                }
+            }
+        }
+    }
 
     let callSendAPIWithTemplate = (sender_psid) => {
         // document fb message template
