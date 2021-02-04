@@ -265,27 +265,41 @@ function handleMessage(sender_psid, message) {
     const greeting = firstTrait(message.nlp, "wit$greetings");
     let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen = "";
-    entitiesArr.forEach((name) => {
-        let entity = firstTrait(message.nlp, name);
-        if (entity && entity.confidence > 0.8) {
-            entityChosen = name;
-        }
-    });
-
     
     // Specific replies
     if (message.text) {
+        callSendAPI(sender_psid, "hello")
+        let res = transform(message.text);
+        if (greeting && greeting.confidence > 0.8) {
+            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+                setTimeout(function() {
+                    callSendAPI(sender_psid, "Please select an option below");
+                } ,3000);
+        } 
+        if (res === "options") {
+            callSendAPIAny(sender_psid, botOptions);
+        }
+        if(res === "hi" || res === "hello") {
+            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+                setTimeout(function() {
+                    callSendAPI(sender_psid, "Please select an option below");
+                } ,3000);
+        }
+
+
+        entitiesArr.forEach((name) => {
+            let entity = firstTrait(message.nlp, name);
+            if (entity && entity.confidence > 0.8) {
+                entityChosen = name;
+            }
+        });
+
         if(entityChosen === "") {
             callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
             The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
         }
         else {
-            if (greeting && greeting.confidence > 0.8) {
-                callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-                    setTimeout(function() {
-                        callSendAPI(sender_psid, "Please select an option below");
-                    } ,3000);
-            } 
+            
             if(entityChosen === "wit$thanks"){
                 callSendAPI(sender_psid,`You 're welcome!`);
                 callSendAPIAny(sender_psid, godbyeGif);
@@ -293,57 +307,8 @@ function handleMessage(sender_psid, message) {
             if(entityChosen === "wit$bye"){
                 callSendAPIAny(sender_psid, byeRresponse);
             }
-            if (message.text === "options") {
-                callSendAPIAny(sender_psid, botOptions);
-            }
         }
     }
-
-
-    let callSendAPIWithTemplate = (sender_psid) => {
-        // document fb message template
-        // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
-        let body = {
-            "recipient": {
-                "id": sender_psid
-            },
-            "message": {
-                "attachment": {
-                    "type": "template",
-                    "payload": {
-                        "template_type": "generic",
-                        "elements": [
-                            {
-                                "title": "Want to build sth awesome?",
-                                "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
-                                "subtitle": "Watch more videos on my youtube channel ^^",
-                                "buttons": [
-                                    {
-                                        "type": "web_url",
-                                        "url": "https://bit.ly/subscribe-haryphamdev",
-                                        "title": "Watch now"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            }
-        };
-    
-        request({
-            "uri": "https://graph.facebook.com/v6.0/me/messages",
-            "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-            "method": "POST",
-            "json": body
-        }, (err, res, body) => {
-            if (!err) {
-                // console.log('message sent!')
-            } else {
-                console.error("Unable to send message:" + err);
-            }
-        });
-    };
 }
 
 module.exports = {
