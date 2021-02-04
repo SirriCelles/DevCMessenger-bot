@@ -62,7 +62,7 @@ let getWebhook = (req, res) => {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === MY_VERIFY_FB_TOKEN) {
+        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
 
             // Responds with the challenge token from the request
             console.log('WEBHOOK_VERIFIED');
@@ -260,59 +260,57 @@ const godbyeGif = {
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822    
-    if( message && message.attachments && message.attachments[0].payload){
-      callSendAPI(sender_psid, "Thank you for watching my video !!!");
-      callSendAPIAny(sender_psid, godbyeGif);
-      return;
-  }
     let res = transform(message.text);
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen = "";
-    callSendAPI(sender_psid, "Hi there too");
+
+    if( message && message.attachments && message.attachments[0].payload){
+      callSendAPI(sender_psid, "Thank you");
+      callSendAPIAny(sender_psid, godbyeGif);
+      // return;
+    }
     
     // Specific replies
-    
-      callSendAPI(sender_psid, "hello")
-      if (greeting && greeting.confidence > 0.8) {
-          callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-              setTimeout(function() {
-                  callSendAPI(sender_psid, "Please select an option below");
-              } ,3000);
-      } 
-      if (res === "options") {
-          callSendAPIAny(sender_psid, botOptions);
-      }
-      if(res === "hi" || res === "hello") {
-          callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-              setTimeout(function() {
-                  callSendAPI(sender_psid, "Please select an option below");
-              } ,3000);
-      }
+    if (greeting && greeting.confidence > 0.8) {
+        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+            setTimeout(function() {
+                callSendAPI(sender_psid, "Please select an option below");
+            } ,3000);
+    } 
+    if (res === "options") {
+        callSendAPIAny(sender_psid, botOptions);
+    }
+    if(res === "hi" || res === "hello") {
+        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+            setTimeout(function() {
+                callSendAPI(sender_psid, "Please select an option below");
+            } ,3000);
+    }
 
 
-      entitiesArr.forEach((name) => {
-          let entity = firstTrait(message.nlp, name);
-          if (entity && entity.confidence > 0.8) {
-              entityChosen = name;
-          }
-      });
+    entitiesArr.forEach((name) => {
+        let entity = firstTrait(message.nlp, name);
+        if (entity && entity.confidence > 0.8) {
+            entityChosen = name;
+        }
+    });
 
-      if(entityChosen === "") {
-          callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-          The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-      }
-      else {
-          
-          if(entityChosen === "wit$thanks"){
-              callSendAPI(sender_psid,`You 're welcome!`);
-              callSendAPIAny(sender_psid, godbyeGif);
-          }
-          if(entityChosen === "wit$bye"){
-              callSendAPIAny(sender_psid, byeRresponse);
-          }
-      }
+    if(entityChosen === "") {
+        callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+        The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
+    }
+    else {
+        
+        if(entityChosen === "wit$thanks"){
+            callSendAPI(sender_psid,`You 're welcome!`);
+            callSendAPIAny(sender_psid, godbyeGif);
+        }
+        if(entityChosen === "wit$bye"){
+            callSendAPIAny(sender_psid, byeRresponse);
+        }
+    }
 }
 
 module.exports = {
