@@ -264,7 +264,7 @@ function handleMessage(sender_psid, message) {
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     let entitiesArr = ["wit$thanks", "wit$bye" ];
-    let entityChosen;
+    let entityChosen = "";
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
         if (entity && entity.confidence > 0.8) {
@@ -275,33 +275,28 @@ function handleMessage(sender_psid, message) {
     
     // Specific replies
     if (message.text) {
-        if(message.text === "") {
-            return;
+        if(entityChosen === "") {
+            callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+            The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
         }
-        if (greeting && greeting.confidence > 0.8) {
-            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-                setTimeout(function() {
-                    callSendAPI(sender_psid, "Please select an option below");
-                } ,3000);
-        }
-
-        if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid,`You 're welcome!`);
-            callSendAPIAny(sender_psid, godbyeGif);
-        }
-        else if(entityChosen === "wit$bye"){
+        else {
+            if (greeting && greeting.confidence > 0.8) {
+                callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+                    setTimeout(function() {
+                        callSendAPI(sender_psid, "Please select an option below");
+                    } ,3000);
+            } 
+            if(entityChosen === "wit$thanks"){
+                callSendAPI(sender_psid,`You 're welcome!`);
+                callSendAPIAny(sender_psid, godbyeGif);
+            }
+            if(entityChosen === "wit$bye"){
                 callSendAPIAny(sender_psid, byeRresponse);
+            }
+            if (message.text === "options") {
+                callSendAPIAny(sender_psid, botOptions);
+            }
         }
-        else{
-            // default
-            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
-            callSendAPIAny(sender_psid, botOptions);
-        }
-
-        if (message.text === "options") {
-            callSendAPIAny(sender_psid, botOptions);
-        }
-
     }
 
 
