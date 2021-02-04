@@ -162,6 +162,7 @@ function handleMessage(sender_psid, message) {
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
         processWait(resValues, 1000);
+        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
     } 
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
