@@ -153,13 +153,13 @@ function handleMessage(sender_psid, message) {
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
         callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-        setTimeout(() => {callSendAPI(sender_psid, "Please select an option below")},2000);
+        setTimeout(callSendAPI(sender_psid, "Please select an option below") ,2000);
+        callSendAPIList(sender_psid)
 
-        setTimeout(() => {callSendAPIList(sender_psid)}, 2000);
+        setTimeout(callSendAPIList(sender_psid), 2000);
 
-        setTimeout(() => {callSendAPIWithTemplate}, 2000);
+        setTimeout(callSendAPIWithTemplate(sender_psid), 2000);
     } 
-
     // if( message && message.attachments && message.attachments[0].payload){
     //     callSendAPI(sender_psid, goobyeRes);
     //     callSendAPIWithTemplate(sender_psid);
