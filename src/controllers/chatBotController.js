@@ -2,7 +2,11 @@
 require("dotenv").config();
 import request from "request";
 
-let data = require('../controllers/response.json');
+const fs = require('fs');
+
+let rawdata = fs.readFileSync('response.json');
+let data = JSON.parse(rawdata);
+
 
 
 let postWebhook = (req, res) =>{
@@ -214,7 +218,7 @@ function handleMessage(sender_psid, message) {
 
     // if( message && message.attachments && message.attachments[0].payload){
     //     callSendAPI(sender_psid, data.thank_you);
-    //     callSendAPIWithTemplate(sender_psid);
+    //     callSendAPIWithTemplate(sender_psid);`
     //     return;
     // }
 
