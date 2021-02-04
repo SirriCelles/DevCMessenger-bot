@@ -156,10 +156,17 @@ const byeResponse = {
       "type": "template",
       "payload": {
         "template_type": "generic",
-        "elements": [{
+        "elements": [
+            {
           "title": "Thanks for visiting!!",
           "subtitle": "Fairwell till next time",
           "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+          "buttons": [
+            {
+              "type":"text",
+              "title":"byb bye"
+            }           
+            ]
         }]
       }
     }
@@ -172,30 +179,26 @@ const botOptions = {
           "template_type":"generic",
           "elements":[
              {
-              "title":"Welcome!",
-              "image_url":"https://petersfancybrownhats.com/company_image.png",
-              "subtitle":"We have the right hat for everyone.",
+              "title":"Upcoming Events",
+              "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+              "subtitle":"View Devc upcoming events",
               "default_action": {
                 "type": "web_url",
-                "url": "https://petersfancybrownhats.com/view?item=103",
+                "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
                 "webview_height_ratio": "tall",
               },
               "buttons":[
                 {
                   "type":"web_url",
-                  "url":"https://petersfancybrownhats.com",
-                  "title":"View Website"
-                },{
-                  "type":"postback",
-                  "title":"Start Chatting",
-                  "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                }              
+                  "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                  "title":"View More"
+                }           
               ]      
             },
             {
-                "title":"Welcome!",
-                "image_url":"https://petersfancybrownhats.com/company_image.png",
-                "subtitle":"We have the right hat for everyone.",
+                "title":"DevC Games",
+                "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+                "subtitle":"Join the game and win awesome rewards!",
                 "default_action": {
                   "type": "web_url",
                   "url": "https://petersfancybrownhats.com/view?item=103",
@@ -204,19 +207,15 @@ const botOptions = {
                 "buttons":[
                   {
                     "type":"web_url",
-                    "url":"https://petersfancybrownhats.com",
-                    "title":"View Website"
-                  },{
-                    "type":"postback",
-                    "title":"Start Chatting",
-                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                  }              
+                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                    "title":"Check out"
+                  }            
                 ]      
             },
             {
-                "title":"Welcome!",
-                "image_url":"https://petersfancybrownhats.com/company_image.png",
-                "subtitle":"We have the right hat for everyone.",
+                "title":"Learning",
+                "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+                "subtitle":"Looking to learn something New?",
                 "default_action": {
                   "type": "web_url",
                   "url": "https://petersfancybrownhats.com/view?item=103",
@@ -225,13 +224,9 @@ const botOptions = {
                 "buttons":[
                   {
                     "type":"web_url",
-                    "url":"https://petersfancybrownhats.com",
-                    "title":"View Website"
-                  },{
-                    "type":"postback",
-                    "title":"Start Chatting",
-                    "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                  }              
+                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                    "title":"View Resources"
+                  }            
                 ]      
               }
 
@@ -242,24 +237,23 @@ const botOptions = {
 
 const godbyeGif = {
     "attachment": {
-              "type": "template",
-              "payload": {
-                 "template_type": "media",
-                 "elements": [
+        "type": "template",
+        "payload": {
+            "template_type": "generic",
+            "elements": [
+            {
+                "url":"../public/images/goodbye.gif",
+                "subtitle":"View Devc upcoming events",
+                "buttons":[
                     {
-                       "media_type": "video",
-                       "attachment_id": "../public/images/goodbye.gif",
-                       "buttons": [
-                        {
-                           "type": "wtext",
-                           "url": "none",
-                           "title": "Thanks For Visiting!!",
-                        }
-                       ]
-                    }
-                 ]
-              }
-            }
+                        "type": "wtext",
+                        "url": "none",
+                        "title": "Thanks For Visiting!!",
+                    }        
+                ]      
+            }]
+        }
+    }
 }
 
 
@@ -268,8 +262,8 @@ function handleMessage(sender_psid, message) {
     // id like button: sticker_id 369239263222822    
     let res = transform(message.text);
 
-
-    let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+    const greeting = firstTrait(message.nlp, "wit$greetings");
+    let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen;
     entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
@@ -278,16 +272,10 @@ function handleMessage(sender_psid, message) {
         }
     });
 
-    const greeting = firstTrait(message.nlp, 'wit$greetings');
-    const thanks = firstTrait(message.nlp, "wit$thanks");
-    const bye = firstTrait(message.nlp, "wit$bye");
+    
+    // Specific replies
     if (message.text) {
         if(message.text === "") {
-            return;
-        }
-
-        if (message.text === "options") {
-            callSendAPIAny(sender_psid, botOptions);
             return;
         }
         if (greeting && greeting.confidence > 0.8) {
@@ -295,70 +283,27 @@ function handleMessage(sender_psid, message) {
                 setTimeout(function() {
                     callSendAPI(sender_psid, "Please select an option below");
                 } ,3000);
-        } else if (thanks && thanks.confidence > 0.8){ 
+        }
+
+        if(entityChosen === "wit$thanks"){
             callSendAPI(sender_psid,`You 're welcome!`);
             callSendAPIAny(sender_psid, godbyeGif);
-            
-        } else if (bye && bye.confidence > 0.8) {
-            callSendAPIAny(sender_psid, byeResponse);
-        }else{
-            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
         }
-    }
-    
+        else if(entityChosen === "wit$bye"){
+                callSendAPIAny(sender_psid, byeRresponse);
+        }
+        else{
+            // default
+            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
+            callSendAPIAny(sender_psid, botOptions);
+        }
 
-    let callSendAPIList = (sender_psid) => {
-        let body = {
-            "recipient": {
-                "id": sender_psid
-            },
-            "message":{
-                "attachment":{
-                  "type":"template",
-                  "payload":{
-                    "template_type":"generic",
-                    "elements":[
-                       {
-                        "title":"Welcome!",
-                        "image_url":"https://petersfancybrownhats.com/company_image.png",
-                        "subtitle":"We have the right hat for everyone.",
-                        "default_action": {
-                          "type": "web_url",
-                          "url": "https://petersfancybrownhats.com/view?item=103",
-                          "webview_height_ratio": "tall",
-                        },
-                        "buttons":[
-                          {
-                            "type":"web_url",
-                            "url":"https://petersfancybrownhats.com",
-                            "title":"View Website"
-                          },{
-                            "type":"postback",
-                            "title":"Start Chatting",
-                            "payload":"DEVELOPER_DEFINED_PAYLOAD"
-                          }              
-                        ]      
-                      }
-                    ]
-                  }
-                }
-            }
-        };
-        // Send the HTTP request to the Messenger Platform
-        request({
-            "uri": "https://graph.facebook.com/v9.0/me/messages",
-            "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-            "method": "POST",
-            "json": request_body
-        }, (err, res, body) => {
-            if (!err) {
-            console.log('message sent!');
-            console.log(`Message Sent: ${response}`);
-            } else {
-            console.error("Unable to send message:" + err);
-            }
-        }); 
+        if (message.text === "options") {
+            callSendAPIAny(sender_psid, botOptions);
+        }
+
     }
+
 
     let callSendAPIWithTemplate = (sender_psid) => {
         // document fb message template
