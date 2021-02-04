@@ -267,21 +267,20 @@ function handleMessage(sender_psid, message) {
                 }
     }
 
+    let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+    let entityChosen;
+    entitiesArr.forEach((name) => {
+        let entity = firstTrait(message.nlp, name);
+        if (entity && entity.confidence > 0.8) {
+            entityChosen = name;
+        }
+    });
 
     // Specific replies
     if (message.text) {
         if(message.text === "") {
             return;
         }
-        
-        let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
-        let entityChosen;
-        entitiesArr.forEach((name) => {
-            let entity = firstTrait(message.nlp, name);
-            if (entity && entity.confidence > 0.8) {
-                entityChosen = name;
-            }
-        });
 
         if (entityChosen === "wit$greetings") {
             callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
