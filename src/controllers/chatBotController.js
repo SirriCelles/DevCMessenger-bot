@@ -170,48 +170,6 @@ function handleMessage(sender_psid, message) {
         }
     }
 
-    // Specific replies
-    if (message.text) {
-        if(message.text === "") {
-            return;
-        }
-        
-        let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
-        let entityChosen = "";
-        entitiesArr.forEach((name) => {
-            let entity = firstTrait(message.nlp, name);
-            if (entity && entity.confidence > 0.8) {
-                entityChosen = name;
-            }
-        });
-
-        if (entityChosen === "wit$greetings") {
-            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-            setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below");
-                callSendAPIAny(sender_psid, botOptions);
-            } ,3000);
-            
-        }
-        else if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid,`You 're welcome!`);
-            callSendAPIAny(sender_psid, godbyeGif);
-        }
-        else if(entityChosen === "wit$bye"){
-                callSendAPIAny(sender_psid, byeRresponse);
-        }
-        else{
-            // default
-            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
-        }
-
-    }
-    // if( message && message.attachments && message.attachments[0].payload){
-    //     callSendAPI(sender_psid, goobyeRes);
-    //     callSendAPIWithTemplate(sender_psid);
-    //     return;
-    // }
-
     const botOptions = {
         "attachment":{
             "type":"template",
@@ -309,6 +267,48 @@ function handleMessage(sender_psid, message) {
                 }
     }
 
+
+    // Specific replies
+    if (message.text) {
+        if(message.text === "") {
+            return;
+        }
+        
+        let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+        let entityChosen;
+        entitiesArr.forEach((name) => {
+            let entity = firstTrait(message.nlp, name);
+            if (entity && entity.confidence > 0.8) {
+                entityChosen = name;
+            }
+        });
+
+        if (entityChosen === "wit$greetings") {
+            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+            setTimeout(function() {
+                callSendAPI(sender_psid, "Please select an option below");
+            } ,3000);
+            
+        }
+        else if(entityChosen === "wit$thanks"){
+            callSendAPI(sender_psid,`You 're welcome!`);
+            callSendAPIAny(sender_psid, godbyeGif);
+        }
+        else if(entityChosen === "wit$bye"){
+                callSendAPIAny(sender_psid, byeRresponse);
+        }
+        else{
+            // default
+            callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
+        }
+
+        if (message.text === "options") {
+            callSendAPIAny(sender_psid, botOptions);
+        }
+
+    }
+
+    
 
     let callSendAPIList = (sender_psid) => {
         let body = {
