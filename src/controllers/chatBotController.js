@@ -2,7 +2,6 @@
 require("dotenv").config();
 import { resolve } from "path";
 import request from "request";
-import {waitAndPrint} from "../controllers/responseController";
 
 
 const fs = require('fs');
@@ -131,6 +130,15 @@ function transform(message) {
     return message.toLowerCase();
 }
 
+function waitAndPrint(callback, time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            callback && callback();
+            resolve();
+        }, time);
+    })
+}
+
 function processWait(values = [], time) {
     if(values.length > 0) {
      waitAndPrint(
@@ -154,15 +162,25 @@ function handleMessage(sender_psid, message) {
     let res = transform(message.text);
     const resValues = [
         "Hi there! Welcome to DevC Chat page",
-        "I'm Deve! How can I assist You?",
-        "Please select an option below."
+        "I'm Deve! How can I assist Yo",
+        "Please select an option belo"
     ];
 
     const greeting = firstTrait(message.nlp, "wit$greetings");
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
-        processWait(resValues, 1000);
-        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
+        
+        setTimeout(() => {
+            callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
+            setTimeout(() => {
+                callSendAPI(sender_psid, "I'm Deve! How can I assist You");
+                setTimeout(() => {
+                    callSendAPI(sender_psid, "Please select an option below")
+                }, 400);
+            }, 400);
+        },1000);
+
+        processWait(resValues, 1000);         
     } 
 
     let entitiesArr = ["wit$thanks", "wit$bye" ];
@@ -197,28 +215,39 @@ function handleMessage(sender_psid, message) {
     // }
 
     const goobyeRes = {
-        "message":{
-            "attachment": {
-              "type": "template",
-              "payload": {
-                 "template_type": "media",
-                 "elements": [
-                    {
-                       "media_type": "video",
-                       "attachment_id": "../public/images/goodbye.gif",
-                       "buttons": [
-                        {
-                           "type": "wtext",
-                           "url": "none",
-                           "title": "Thanks For Visiting!!",
-                        }
-                       ]
-                    }
-                 ]
-              }
+        "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [{
+                "title": "Tanks For Visisting",
+                "url": "https://i.gifer.com/4V0f.gif",
+              }]
             }
         }
     }
+
+        // "message":{
+        //     "attachment": {
+        //       "type": "template",
+        //       "payload": {
+        //          "template_type": "media",
+        //          "elements": [
+        //             {
+        //                "media_type": "video",
+        //                "attachment_id": "../public/images/goodbye.gif",
+        //                "buttons": [
+        //                 {
+        //                    "type": "wtext",
+        //                    "url": "none",
+        //                    "title": "Thanks For Visiting!!",
+        //                 }
+        //                ]
+        //             }
+        //          ]
+        //       }
+        //     }
+        // }
 
     let callSendAPIWithTemplate = (sender_psid) => {
         // document fb message template

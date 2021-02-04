@@ -1,3 +1,4 @@
+
 function waitAndPrint(callback, time) {
     return new Promise(resolve => {
         setTimeout(() => {
@@ -7,10 +8,21 @@ function waitAndPrint(callback, time) {
     })
 }
 
+function processWait(values = [], time) {
+    if(values.length > 0) {
+     waitAndPrint(
+         function(){
+             callSendAPI(sender_psid, values[0]);
+             
+         }, time
+     ).then(
+         () => {
+             let temp = [...values];
+
+             processWait(temp.slice(1), time)
+         }
+     )
+    } 
+ }
 
 
-
-
-module.exports = {
-    waitAndPrint: waitAndPrint
-}
