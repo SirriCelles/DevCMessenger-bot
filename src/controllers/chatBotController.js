@@ -195,7 +195,8 @@ function handleMessage(sender_psid, message) {
     const greeting = firstTrait(message.nlp, "wit$greetings");
     // Specific replies
     if (greeting && greeting.confidence > 0.8) {
-        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?");
+        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page");
+        callSendAPI(sender_psid, "I'm Deve! How can I assist You?");
         callSendAPI(sender_psid, "Please select an option below.");
     } 
 
@@ -214,7 +215,7 @@ function handleMessage(sender_psid, message) {
        }
     else if(entityChosen === "wit$bye"){
             //send bye message
-            callSendAPI(sender_psid,'Thanks for Visiting!!');
+            callSendAPI(sender_psid, goobyeRes);
         }
     // else if(entityChosen === "") {
     //     // default
@@ -229,6 +230,30 @@ function handleMessage(sender_psid, message) {
     //     callSendAPIWithTemplate(sender_psid);`
     //     return;
     // }
+
+    const goobyeRes = {
+        "message":{
+            "attachment": {
+              "type": "template",
+              "payload": {
+                 "template_type": "media",
+                 "elements": [
+                    {
+                       "media_type": "video",
+                       "attachment_id": "../public/images/goodbye.gif",
+                       "buttons": [
+                        {
+                           "type": "wtext",
+                           "url": "none",
+                           "title": "Thanks For Visiting!!",
+                        }
+                       ]
+                    }
+                 ]
+              }
+            }
+        }
+    }
 
     let callSendAPIWithTemplate = (sender_psid) => {
         // document fb message template
