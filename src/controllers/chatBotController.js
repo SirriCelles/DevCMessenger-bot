@@ -265,6 +265,7 @@ function handleMessage(sender_psid, message) {
     const greeting = firstTrait(message.nlp, "wit$greetings");
     let entitiesArr = ["wit$thanks", "wit$bye" ];
     let entityChosen = "";
+    callSendAPI(sender_psid, "Hi there too");
     
     // Specific replies
     if (message.text) {
