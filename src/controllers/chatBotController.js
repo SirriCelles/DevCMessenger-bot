@@ -281,20 +281,6 @@ function handleMessage(sender_psid, message) {
     const greeting = firstTrait(message.nlp, 'wit$greetings');
     const thanks = firstTrait(message.nlp, "wit$thanks");
     const bye = firstTrait(message.nlp, "wit$bye");
-    if (greeting && greeting.confidence > 0.8) {
-        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-            setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below");
-            } ,3000);
-    } else if (thanks && thanks.confidence > 0.8){ 
-        callSendAPI(sender_psid,`You 're welcome!`);
-        callSendAPIAny(sender_psid, godbyeGif);
-        
-    } else if (bye && bye.confidence > 0.8) {
-        callSendAPIAny(sender_psid, byeResponse);
-    }
-
-    // Specific replies
     if (message.text) {
         if(message.text === "") {
             return;
@@ -304,28 +290,21 @@ function handleMessage(sender_psid, message) {
             callSendAPIAny(sender_psid, botOptions);
             return;
         }
-
-        if (entityChosen === "wit$greetings") {
+        if (greeting && greeting.confidence > 0.8) {
             callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-            setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below");
-            } ,3000);
-            
-        }
-        else if(entityChosen === "wit$thanks"){
+                setTimeout(function() {
+                    callSendAPI(sender_psid, "Please select an option below");
+                } ,3000);
+        } else if (thanks && thanks.confidence > 0.8){ 
             callSendAPI(sender_psid,`You 're welcome!`);
             callSendAPIAny(sender_psid, godbyeGif);
-        }
-        else if(entityChosen === "wit$bye"){
-                callSendAPIAny(sender_psid, byeRresponse);
-        }
-        else{
-            // default
+            
+        } else if (bye && bye.confidence > 0.8) {
+            callSendAPIAny(sender_psid, byeResponse);
+        }else{
             callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select an option from the list");
         }
-
     }
-
     
 
     let callSendAPIList = (sender_psid) => {
