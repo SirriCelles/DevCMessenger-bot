@@ -62,7 +62,7 @@ let getWebhook = (req, res) => {
     if (mode && token) {
 
         // Checks the mode and token sent is correct
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        if (mode === 'subscribe' && token === MY_VERIFY_FB_TOKEN) {
 
             // Responds with the challenge token from the request
             console.log('WEBHOOK_VERIFIED');
@@ -268,47 +268,46 @@ function handleMessage(sender_psid, message) {
     callSendAPI(sender_psid, "Hi there too");
     
     // Specific replies
-    if (message.text) {
-        callSendAPI(sender_psid, "hello")
-        if (greeting && greeting.confidence > 0.8) {
-            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-                setTimeout(function() {
-                    callSendAPI(sender_psid, "Please select an option below");
-                } ,3000);
-        } 
-        if (res === "options") {
-            callSendAPIAny(sender_psid, botOptions);
-        }
-        if(res === "hi" || res === "hello") {
-            callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-                setTimeout(function() {
-                    callSendAPI(sender_psid, "Please select an option below");
-                } ,3000);
-        }
+    
+      callSendAPI(sender_psid, "hello")
+      if (greeting && greeting.confidence > 0.8) {
+          callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+              setTimeout(function() {
+                  callSendAPI(sender_psid, "Please select an option below");
+              } ,3000);
+      } 
+      if (res === "options") {
+          callSendAPIAny(sender_psid, botOptions);
+      }
+      if(res === "hi" || res === "hello") {
+          callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+              setTimeout(function() {
+                  callSendAPI(sender_psid, "Please select an option below");
+              } ,3000);
+      }
 
 
-        entitiesArr.forEach((name) => {
-            let entity = firstTrait(message.nlp, name);
-            if (entity && entity.confidence > 0.8) {
-                entityChosen = name;
-            }
-        });
+      entitiesArr.forEach((name) => {
+          let entity = firstTrait(message.nlp, name);
+          if (entity && entity.confidence > 0.8) {
+              entityChosen = name;
+          }
+      });
 
-        if(entityChosen === "") {
-            callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-            The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-        }
-        else {
-            
-            if(entityChosen === "wit$thanks"){
-                callSendAPI(sender_psid,`You 're welcome!`);
-                callSendAPIAny(sender_psid, godbyeGif);
-            }
-            if(entityChosen === "wit$bye"){
-                callSendAPIAny(sender_psid, byeRresponse);
-            }
-        }
-    }
+      if(entityChosen === "") {
+          callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+          The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
+      }
+      else {
+          
+          if(entityChosen === "wit$thanks"){
+              callSendAPI(sender_psid,`You 're welcome!`);
+              callSendAPIAny(sender_psid, godbyeGif);
+          }
+          if(entityChosen === "wit$bye"){
+              callSendAPIAny(sender_psid, byeRresponse);
+          }
+      }
 }
 
 module.exports = {
