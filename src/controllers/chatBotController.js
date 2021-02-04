@@ -196,15 +196,12 @@ function handleMessage(sender_psid, message) {
         }
     });
 
-
     if(entityChosen === ""){
         //default
-        callSendAPI(sender_psid, data.intro_message );
+        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?" );
     }else if (entityChosen === "wit$greetings") {
             //send greetings message
-            callSendAPI(sender_psid, data.intro_message);
-            callSendAPI(sender_psid, data.event_update_option);
-            handleResponse(sender_psid, entityChosen, event_update_yes_option_value, event_update_no_option_value);
+            callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page. I'm Deve! How can I assist You?");
         }
 
     else if(entityChosen === "wit$thanks"){
@@ -213,8 +210,12 @@ function handleMessage(sender_psid, message) {
        }
     else if(entityChosen === "wit$bye"){
             //send bye message
-            callSendAPI(sender_psid,'bye-bye!');
+            callSendAPI(sender_psid,'Thanks for Visiting!!');
         }
+    else {
+        // default
+        callSendAPI(sender_psid, "Am Sorry I can't process this information right now. Please select another option from the list");
+    }
 
     // if( message && message.attachments && message.attachments[0].payload){
     //     callSendAPI(sender_psid, data.thank_you);
