@@ -270,7 +270,6 @@ function handleMessage(sender_psid, message) {
     // Specific replies
     if (message.text) {
         callSendAPI(sender_psid, "hello")
-        let res = transform(message.text);
         if (greeting && greeting.confidence > 0.8) {
             callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
                 setTimeout(function() {
