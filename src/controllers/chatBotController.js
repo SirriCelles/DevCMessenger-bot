@@ -33,10 +33,9 @@ let postWebhook = (req, res) =>{
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
-            if (webhook_event) {
+            if (webhook_event.message === undefined) {
               callSendAPI(sender_psid, "Hello I am Deve! Nice to see you! How may I assist? - Please select the START button to Start a conversation")
-            }
-            if (webhook_event.message) {
+            }else if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
@@ -107,6 +106,7 @@ function callSendAPI(sender_psid, response) {
     },
     "message": {"text": response }
   }
+  console.log("request body" + request_body);
 
   // Send the HTTP request to the Messenger Platform
   request({
