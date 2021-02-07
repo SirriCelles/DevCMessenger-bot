@@ -242,58 +242,58 @@ function handleMessage(sender_psid, message) {
         callSendAPI(sender_psid, response);
         return; 
     } 
-    if (message.text) {
-        let res = transform(message.text);
-        entitiesArr.forEach((name) => {
-          let entity = firstTrait(message.nlp, name);
-          if (entity && entity.confidence > 0.6) {
-              entityChosen = name;
-          }
-        });
+    let res = transform(message.text);
+    entitiesArr.forEach((name) => {
+      let entity = firstTrait(message.nlp, name);
+      if (entity && entity.confidence > 0.6) {
+          entityChosen = name;
+      }
+    });
 
-        if (entityChosen === "wit$greetings") {
-          response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"}
-          callSendAPI(sender_psid, response);
-              setTimeout(function() {
-                  callSendAPI(sender_psid, {"text": "Please select an option below"});
-              } ,3000);
-        } 
-        else  if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid, {"text": `You 're welcome!`});
-            response = 
-            callSendAPI(sender_psid);
-        }
-        else if(entityChosen === "wit$bye"){
-          response = {
-            "attachment": {
-              "type": "template",
-              "payload": {
-                "template_type": "generic",
-                "elements": [
-                    {
-                  "title": "Thanks for visiting!!",
-                  "subtitle": "Fairwell till next time",
-                  "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-                  "buttons": [
-                    {
-                      "type":"text",
-                      "title":"byb bye"
-                    }           
-                    ]
-                }]
-              }
-            }
-          }
-          callSendAPI(sender_psid, {"text": "Thanks for visiting"});
-          callSendAPIAny(sender_psid, response);
-        } 
-
-        if (res === "options") {
-          callSendAPI(sender_psid, {"text": `you choosed ${message.text}`});
-        }
-
-
+    if (entityChosen === "wit$greetings") {
+      response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"}
+      callSendAPI(sender_psid, response);
+          setTimeout(function() {
+              callSendAPI(sender_psid, {"text": "Please select an option below"});
+          } ,3000);
     } 
+    else  if(entityChosen === "wit$thanks"){
+        callSendAPI(sender_psid, {"text": `You 're welcome!`});
+        response = 
+        callSendAPI(sender_psid);
+    }
+    else if(entityChosen === "wit$bye"){
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [
+                {
+              "title": "Thanks for visiting!!",
+              "subtitle": "Fairwell till next time",
+              "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+              "buttons": [
+                {
+                  "type":"text",
+                  "title":"byb bye"
+                }           
+                ]
+            }]
+          }
+        }
+      }
+      callSendAPI(sender_psid, {"text": "Thanks for visiting"});
+      callSendAPIAny(sender_psid, response);
+    } 
+    else {
+      response = {"text": "The Bot needs More traing. Choose an option below to start a conversation"};
+      callSendAPI(sender_psid, response);
+    }
+
+    if (res === "options") {
+      callSendAPI(sender_psid, {"text": `you choosed ${message.text}`});
+    }
     else if (message.attachment) {
       callSendAPI(sender_psid, "Some Attachment");
     }
