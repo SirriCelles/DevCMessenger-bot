@@ -249,136 +249,137 @@ function handleMessage(sender_psid, message) {
         return; 
     }
     
-    let res = transform(message.text);
-    entitiesArr.forEach((name) => {
-      let entity = firstTrait(message.nlp, name);
-      if (entity && entity.confidence > 0.6) {
-          entityChosen = name;
-      }
-    });
-
-    if (entityChosen === "wit$greetings") {
-      response = {
-        "attachment":{
-          "type":"template",
-          "payload":{
-            "template_type":"button",
-            "text":"See Options",
-            "buttons":[
-              {
-                "type":"text",
-                "title":"Yes"
-              },
-              {
-                "type":"text",
-                "title":"No"
-              }  
-            ]
-          }
+    if (message.text) {
+        let res = transform(message.text);
+        entitiesArr.forEach((name) => {
+        let entity = firstTrait(message.nlp, name);
+        if (entity && entity.confidence > 0.6) {
+            entityChosen = name;
         }
-      }
-      callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
-          setTimeout(function() {
-              callSendAPI(sender_psid, {"text": "Please select an option below"});
-              callSendAPI(sender_psid, response);
-          } ,3000);
-    } 
-    else  if(entityChosen === "wit$thanks"){
-        callSendAPI(sender_psid, {"text": `You 're welcome!`});
-    }
-    else if(entityChosen === "wit$bye"){
-      response = {
-        "attachment": {
-          "type": "template",
-          "payload": {
-            "template_type": "generic",
-            "elements": [
-                {
-              "title": "Thanks for visiting!!",
-              "subtitle": "Fairwell till next time",
-              "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-              "buttons": [
+      });
+
+      if (entityChosen === "wit$greetings") {
+        response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"button",
+              "text":"See Options",
+              "buttons":[
                 {
                   "type":"text",
-                  "title":"byb bye"
-                }         
-                ]
-            }]
-          }
-        }
-      }
-      callSendAPI(sender_psid, {"text": "Thanks for visiting"});
-      callSendAPI(sender_psid, response);
-      return;
-    } 
-
-    if (res === "options") {
-      response = {
-        "attachment":{
-          "type":"template",
-          "payload":{
-            "template_type":"generic",
-            "elements":[
-               {
-                "title":"Upcoming Events",
-                "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
-                "subtitle":"View Devc upcoming events",
-                "default_action": {
-                  "type": "web_url",
-                  "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                  "webview_height_ratio": "tall",
+                  "title":"Yes"
                 },
-                "buttons":[
-                  {
-                    "type":"web_url",
-                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                    "title":"View More"
-                  }           
-                ]      
-              },
-              {
-                  "title":"DevC Games",
-                  "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
-                  "subtitle":"Join the game and win awesome rewards!",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://petersfancybrownhats.com/view?item=103",
-                    "webview_height_ratio": "tall",
-                  },
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                      "title":"Check out"
-                    }            
-                  ]      
-              },
-              {
-                  "title":"Learning",
-                  "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
-                  "subtitle":"Looking to learn something New?",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://petersfancybrownhats.com/view?item=103",
-                    "webview_height_ratio": "tall",
-                  },
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                      "title":"View Resources"
-                    }            
-                  ]      
-                }
-    
-            ]
+                {
+                  "type":"text",
+                  "title":"No"
+                }  
+              ]
+            }
           }
         }
+        callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
+            setTimeout(function() {
+                callSendAPI(sender_psid, {"text": "Please select an option below"});
+                callSendAPI(sender_psid, response);
+            } ,3000);
+      } 
+      else  if(entityChosen === "wit$thanks"){
+          callSendAPI(sender_psid, {"text": `You 're welcome!`});
       }
-      callSendAPI(sender_psid, {"text": "The Bot needs More traing. Choose an option below to start a conversation"})
-      setTimeout(() => {
+      else if(entityChosen === "wit$bye"){
+        response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [
+                  {
+                "title": "Thanks for visiting!!",
+                "subtitle": "Fairwell till next time",
+                "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+                "buttons": [
+                  {
+                    "type":"text",
+                    "title":"byb bye"
+                  }         
+                  ]
+              }]
+            }
+          }
+        }
+        callSendAPI(sender_psid, {"text": "Thanks for visiting"});
         callSendAPI(sender_psid, response);
-      }, 2000);
+      } 
+
+      if (res === "options") {
+        response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"generic",
+              "elements":[
+                {
+                  "title":"Upcoming Events",
+                  "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+                  "subtitle":"View Devc upcoming events",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                    "webview_height_ratio": "tall",
+                  },
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                      "title":"View More"
+                    }           
+                  ]      
+                },
+                {
+                    "title":"DevC Games",
+                    "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+                    "subtitle":"Join the game and win awesome rewards!",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                        "title":"Check out"
+                      }            
+                    ]      
+                },
+                {
+                    "title":"Learning",
+                    "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+                    "subtitle":"Looking to learn something New?",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                        "title":"View Resources"
+                      }            
+                    ]      
+                  }
+      
+              ]
+            }
+          }
+        }
+        callSendAPI(sender_psid, {"text": "The Bot needs More traing. Choose an option below to start a conversation"})
+        setTimeout(() => {
+          callSendAPI(sender_psid, response);
+        }, 2000);
+      }
     }
 }
 
