@@ -104,9 +104,9 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message": {"text": response }
+    "message":  response 
   }
-  console.log("request body" + request_body);
+  console.log("request body" + JSON.stringify(request_body, null, 4));
 
   // Send the HTTP request to the Messenger Platform
   request({
@@ -285,10 +285,11 @@ function handleMessage(sender_psid, message) {
       } 
       else  if(entityChosen === "wit$thanks"){
           callSendAPI(sender_psid,`You 're welcome!`);
-          callSendAPIAny(sender_psid, godbyeGif);
+          // callSendAPIAny(sender_psid, godbyeGif);
       }
       else if(entityChosen === "wit$bye"){
-        callSendAPIAny(sender_psid, byeResponse);
+        callSendAPI(sender_psid, "Thanks for visiting");
+        // callSendAPIAny(sender_psid, byeResponse);
       }
 
     } else if (message.attachment) {
