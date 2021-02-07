@@ -123,27 +123,6 @@ function callSendAPI(sender_psid, response) {
   
 }
 
- // Send the HTTP request to the Messenger Platform anyform
- function callSendAPIAny(sender_psid, response) {
-    let request_body = {
-      "recipient": {
-        "id": sender_psid
-      },
-      "message": response
-    }
-    request({
-      "uri": "https://graph.facebook.com/v2.6/me/messages",
-      "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-      "method": "POST",
-      "json": request_body
-    }, (err, res, body) => {
-      if (!err) {
-        console.log('message sent!')
-      } else {
-        console.error("Unable to send message:" + err);
-      }
-    }); 
-  }
 
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
@@ -264,32 +243,33 @@ function handleMessage(sender_psid, message) {
     // id like button: sticker_id 369239263222822   
     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
     let entityChosen = ""; 
+    if (typeof message.text === 'undefined') {
+      callSendAPI(sender_psid, "Hi am Deve! Please select the START button to start a conversation");
+    } else if (message.text) {
+        let res = transform(message.text);
+        callSendAPI(sender_psid, "hello");
 
-    if (message.text) {
-      let res = transform(message.text);
-      callSendAPI(sender_psid, "hello");
+        // entitiesArr.forEach((name) => {
+        //   let entity = firstTrait(message.nlp, name);
+        //   if (entity && entity.confidence > 0.6) {
+        //       entityChosen = name;
+        //   }
+        // });
 
-      // entitiesArr.forEach((name) => {
-      //   let entity = firstTrait(message.nlp, name);
-      //   if (entity && entity.confidence > 0.6) {
-      //       entityChosen = name;
-      //   }
-      // });
-
-      // if (entityChosen === "wit$greetings") {
-      //   callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
-      //       setTimeout(function() {
-      //           callSendAPI(sender_psid, "Please select an option below");
-      //       } ,3000);
-      // } 
-      // else  if(entityChosen === "wit$thanks"){
-      //     callSendAPI(sender_psid,`You 're welcome!`);
-      //     // callSendAPIAny(sender_psid, godbyeGif);
-      // }
-      // else if(entityChosen === "wit$bye"){
-      //   callSendAPI(sender_psid, "Thanks for visiting");
-      //   // callSendAPIAny(sender_psid, byeResponse);
-      // }
+        // if (entityChosen === "wit$greetings") {
+        //   callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
+        //       setTimeout(function() {
+        //           callSendAPI(sender_psid, "Please select an option below");
+        //       } ,3000);
+        // } 
+        // else  if(entityChosen === "wit$thanks"){
+        //     callSendAPI(sender_psid,`You 're welcome!`);
+        //     // callSendAPIAny(sender_psid, godbyeGif);
+        // }
+        // else if(entityChosen === "wit$bye"){
+        //   callSendAPI(sender_psid, "Thanks for visiting");
+        //   // callSendAPIAny(sender_psid, byeResponse);
+        // }
 
     } else if (message.attachment) {
       callSendAPIAny(sender_psid, "Some Attachment");
