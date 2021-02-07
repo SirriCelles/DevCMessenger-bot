@@ -114,7 +114,34 @@ function callSendAPI(sender_psid, response) {
       console.error("Unable to send message:" + err);
     }
   }); 
-  
+}
+
+// send call with template
+function callSendAPIAny(sender_psid, response) {
+  // Construct the message body
+let request_body = {
+  "recipient": {
+    "id": sender_psid
+  },
+  "message":  response
+}
+console.log("request body" + JSON.stringify(request_body, null, 4));
+
+// Send the HTTP request to the Messenger Platform
+request({
+  "uri": "https://graph.facebook.com/v9.0/me/messages",
+  "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+  "method": "POST",
+  "json": request_body
+}, (err, res, body) => {
+  if (!err) {
+    console.log('message sent!');
+    console.log(`Message Sent: ${response}`);
+  } else {
+    console.error("Unable to send message:" + err);
+  }
+}); 
+
 }
 
 
@@ -256,11 +283,11 @@ function handleMessage(sender_psid, message) {
         } 
         else  if(entityChosen === "wit$thanks"){
             callSendAPI(sender_psid,`You 're welcome!`);
-            // callSendAPIAny(sender_psid, godbyeGif);
+            callSendAPIAny(sender_psid, godbyeGif);
         }
         else if(entityChosen === "wit$bye"){
           callSendAPI(sender_psid, "Thanks for visiting");
-          // callSendAPIAny(sender_psid, byeResponse);
+          callSendAPIAny(sender_psid, byeResponse);
         }
 
     } else if (message.attachment) {
