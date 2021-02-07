@@ -23,11 +23,8 @@ let postWebhook = (req, res) =>{
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
             console.log("Mesage from web hook: " + JSON.stringify(webhook_event.message, null, 4));
-            if(typeof webhook_event.message === 'undefined') {
-              console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
-              console.log("true");
-              return;
-            }
+            console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
+           
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
@@ -99,7 +96,7 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message":  {"text": response}
+    "message":  response
   }
   console.log("request body" + JSON.stringify(request_body, null, 4));
 
@@ -119,35 +116,6 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-// send call with template
-function callSendAPIAny(sender_psid, response) {
-  // Construct the message body
-let request_body = {
-  "recipient": {
-    "id": sender_psid
-  },
-  "message":  response
-}
-console.log("request body" + JSON.stringify(request_body, null, 4));
-
-// Send the HTTP request to the Messenger Platform
-request({
-  "uri": "https://graph.facebook.com/v9.0/me/messages",
-  "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-  "method": "POST",
-  "json": request_body
-}, (err, res, body) => {
-  if (!err) {
-    console.log('message sent!');
-    console.log(`Message Sent: ${response}`);
-  } else {
-    console.error("Unable to send message:" + err);
-  }
-}); 
-
-}
-
-
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
@@ -156,122 +124,125 @@ function transform(message) {
     return message.toLowerCase();
 }
 
+let byeResponse = {
+  "attachment": {
+    "type": "template",
+    "payload": {
+      "template_type": "generic",
+      "elements": [
+          {
+        "title": "Thanks for visiting!!",
+        "subtitle": "Fairwell till next time",
+        "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+        "buttons": [
+          {
+            "type":"text",
+            "title":"byb bye"
+          }           
+          ]
+      }]
+    }
+  }
+}
+
+let botOptions = {
+  "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"generic",
+        "elements":[
+           {
+            "title":"Upcoming Events",
+            "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+            "subtitle":"View Devc upcoming events",
+            "default_action": {
+              "type": "web_url",
+              "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+              "webview_height_ratio": "tall",
+            },
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                "title":"View More"
+              }           
+            ]      
+          },
+          {
+              "title":"DevC Games",
+              "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+              "subtitle":"Join the game and win awesome rewards!",
+              "default_action": {
+                "type": "web_url",
+                "url": "https://petersfancybrownhats.com/view?item=103",
+                "webview_height_ratio": "tall",
+              },
+              "buttons":[
+                {
+                  "type":"web_url",
+                  "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                  "title":"Check out"
+                }            
+              ]      
+          },
+          {
+              "title":"Learning",
+              "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+              "subtitle":"Looking to learn something New?",
+              "default_action": {
+                "type": "web_url",
+                "url": "https://petersfancybrownhats.com/view?item=103",
+                "webview_height_ratio": "tall",
+              },
+              "buttons":[
+                {
+                  "type":"web_url",
+                  "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                  "title":"View Resources"
+                }            
+              ]      
+            }
+
+        ]
+      }
+  }
+}
+
+let godbyeGif = {
+  "attachment": {
+      "type": "template",
+      "payload": {
+          "template_type": "generic",
+          "elements": [
+          {
+              "url":"../public/images/goodbye.gif",
+              "subtitle":"View Devc upcoming events",
+              "buttons":[
+                  {
+                      "type": "wtext",
+                      "url": "none",
+                      "title": "Thanks For Visiting!!",
+                  }        
+              ]      
+          }]
+      }
+  }
+}
+
+
 
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822  
-    const byeResponse = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [
-              {
-            "title": "Thanks for visiting!!",
-            "subtitle": "Fairwell till next time",
-            "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-            "buttons": [
-              {
-                "type":"text",
-                "title":"byb bye"
-              }           
-              ]
-          }]
-        }
-      }
-  }
-  
-  const botOptions = {
-      "attachment":{
-          "type":"template",
-          "payload":{
-            "template_type":"generic",
-            "elements":[
-               {
-                "title":"Upcoming Events",
-                "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
-                "subtitle":"View Devc upcoming events",
-                "default_action": {
-                  "type": "web_url",
-                  "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                  "webview_height_ratio": "tall",
-                },
-                "buttons":[
-                  {
-                    "type":"web_url",
-                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                    "title":"View More"
-                  }           
-                ]      
-              },
-              {
-                  "title":"DevC Games",
-                  "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
-                  "subtitle":"Join the game and win awesome rewards!",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://petersfancybrownhats.com/view?item=103",
-                    "webview_height_ratio": "tall",
-                  },
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                      "title":"Check out"
-                    }            
-                  ]      
-              },
-              {
-                  "title":"Learning",
-                  "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
-                  "subtitle":"Looking to learn something New?",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://petersfancybrownhats.com/view?item=103",
-                    "webview_height_ratio": "tall",
-                  },
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                      "title":"View Resources"
-                    }            
-                  ]      
-                }
-  
-            ]
-          }
-      }
-  }
-  
-  const godbyeGif = {
-      "attachment": {
-          "type": "template",
-          "payload": {
-              "template_type": "generic",
-              "elements": [
-              {
-                  "url":"../public/images/goodbye.gif",
-                  "subtitle":"View Devc upcoming events",
-                  "buttons":[
-                      {
-                          "type": "wtext",
-                          "url": "none",
-                          "title": "Thanks For Visiting!!",
-                      }        
-                  ]      
-              }]
-          }
-      }
-  }
-  
-
     let response 
     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
     let entityChosen = ""; 
     if (typeof message === 'undefined' || typeof message.text === 'undefined') {
-        callSendAPI(sender_psid, "Hi am Deve! Please select the START button to start a conversation");
-    } else if (message.text) {
+      response = {text: "Hi am Deve! Please select the START button to start a conversation"}
+        callSendAPI(sender_psid, response);
+        return; 
+    } 
+    if (message.text) {
         let res = transform(message.text);
         entitiesArr.forEach((name) => {
           let entity = firstTrait(message.nlp, name);
@@ -281,26 +252,49 @@ function handleMessage(sender_psid, message) {
         });
 
         if (entityChosen === "wit$greetings") {
-          callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
+          response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"}
+          callSendAPI(sender_psid, response);
               setTimeout(function() {
-                  callSendAPI(sender_psid, "Please select an option below");
+                  callSendAPI(sender_psid, {"text": "Please select an option below"});
               } ,3000);
         } 
         else  if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid,`You 're welcome!`);
-            callSendAPIAny(sender_psid, godbyeGif);
+            callSendAPI(sender_psid, {"text": `You 're welcome!`});
+            response = 
+            callSendAPI(sender_psid);
         }
         else if(entityChosen === "wit$bye"){
-          callSendAPI(sender_psid, "Thanks for visiting");
-          callSendAPIAny(sender_psid, byeResponse);
-        } else {return;}
+          response = {
+            "attachment": {
+              "type": "template",
+              "payload": {
+                "template_type": "generic",
+                "elements": [
+                    {
+                  "title": "Thanks for visiting!!",
+                  "subtitle": "Fairwell till next time",
+                  "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+                  "buttons": [
+                    {
+                      "type":"text",
+                      "title":"byb bye"
+                    }           
+                    ]
+                }]
+              }
+            }
+          }
+          callSendAPI(sender_psid, {"text": "Thanks for visiting"});
+          callSendAPIAny(sender_psid, response);
+        } 
 
         if (res === "options") {
-          callSendAPI(sender_psid,"you choosed options");
+          callSendAPI(sender_psid, {"text": `you choosed ${message.text}`});
         }
 
 
-    } else if (message.attachment) {
+    } 
+    else if (message.attachment) {
       callSendAPI(sender_psid, "Some Attachment");
     }
 
