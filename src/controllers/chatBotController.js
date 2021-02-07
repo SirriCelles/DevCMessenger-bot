@@ -29,6 +29,7 @@ let postWebhook = (req, res) =>{
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
             console.log("Mesage from web hook: " + JSON.stringify(webhook_event.message, null, 4));
+            console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
@@ -269,7 +270,7 @@ function handleMessage(sender_psid, message) {
     if( message && message.attachments && message.attachments[0].payload){
       callSendAPI(sender_psid, "Thank you");
       callSendAPIAny(sender_psid, godbyeGif);
-      // return;
+      return;
     }
     
     // Specific replies
