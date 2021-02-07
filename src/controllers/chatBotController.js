@@ -258,69 +258,113 @@ const godbyeGif = {
     }
 }
 
-
-function handleMessage(sender_psid, message) {
-    //handle message for react, like press like button
-    // id like button: sticker_id 369239263222822   
-    let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
-    let entityChosen = ""; 
-    if (typeof message === 'undefined' || typeof message.text === 'undefined') {
-        callSendAPI(sender_psid, "Hi am Deve! Please select the START button to start a conversation");
-    } else if (message.text) {
-        let res = transform(message.text);
-        entitiesArr.forEach((name) => {
-          let entity = firstTrait(message.nlp, name);
-          if (entity && entity.confidence > 0.6) {
-              entityChosen = name;
-          }
-        });
-
-        if (entityChosen === "wit$greetings") {
-          callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
-              setTimeout(function() {
-                  callSendAPI(sender_psid, "Please select an option below");
-              } ,3000);
-        } 
-        else  if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid,`You 're welcome!`);
-            callSendAPIAny(sender_psid, godbyeGif);
-        }
-        else if(entityChosen === "wit$bye"){
-          callSendAPI(sender_psid, "Thanks for visiting");
-          callSendAPIAny(sender_psid, byeResponse);
-        }
-
-    } else if (message.attachment) {
-      callSendAPI(sender_psid, "Some Attachment");
+function handleMessage(sender_psid, received_message) {
+  let response;
+  
+  // Checks if the message contains text
+  if (received_message.text) {    
+    // Create the payload for a basic text message, which
+    // will be added to the body of our request to the Send API
+    response = {
+      "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
     }
-
-    // if( message && message.attachments && message.attachments[0].payload){
-    //   callSendAPI(sender_psid, "Thank you");
-    //   callSendAPIAny(sender_psid, godbyeGif);
-    //   return;
-    // }
-    
-    // Specific replies
-   
-    // if (res === "options") {
-    //     callSendAPIAny(sender_psid, botOptions);
-    // }
-    // if(res === "hi" || res === "hello") {
-    //     callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-    //         setTimeout(function() {
-    //             callSendAPI(sender_psid, "Please select an option below");
-    //         } ,3000);
-    // }
-
-
-    
-
-    // if(entityChosen === "") {
-    //   callSendAPI(sender_psid, "hello to");
-    //     // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-    //     // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-    // }
+  } else if (received_message.attachments) {
+    // Get the URL of the message attachment
+    let attachment_url = received_message.attachments[0].payload.url;
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "generic",
+          "elements": [{
+            "title": "Is this the right picture?",
+            "subtitle": "Tap a button to answer.",
+            "image_url": attachment_url,
+            "buttons": [
+              {
+                "type": "postback",
+                "title": "Yes!",
+                "payload": "yes",
+              },
+              {
+                "type": "postback",
+                "title": "No!",
+                "payload": "no",
+              }
+            ],
+          }]
+        }
+      }
+    }
+  } 
+  
+  // Send the response message
+  callSendAPI(sender_psid, response);    
 }
+
+
+// function handleMessage(sender_psid, message) {
+//     //handle message for react, like press like button
+//     // id like button: sticker_id 369239263222822   
+//     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+//     let entityChosen = ""; 
+//     if (typeof message === 'undefined' || typeof message.text === 'undefined') {
+//         callSendAPI(sender_psid, "Hi am Deve! Please select the START button to start a conversation");
+//     } else if (message.text) {
+//         let res = transform(message.text);
+//         entitiesArr.forEach((name) => {
+//           let entity = firstTrait(message.nlp, name);
+//           if (entity && entity.confidence > 0.6) {
+//               entityChosen = name;
+//           }
+//         });
+
+//         if (entityChosen === "wit$greetings") {
+//           callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
+//               setTimeout(function() {
+//                   callSendAPI(sender_psid, "Please select an option below");
+//               } ,3000);
+//         } 
+//         else  if(entityChosen === "wit$thanks"){
+//             callSendAPI(sender_psid,`You 're welcome!`);
+//             callSendAPIAny(sender_psid, godbyeGif);
+//         }
+//         else if(entityChosen === "wit$bye"){
+//           callSendAPI(sender_psid, "Thanks for visiting");
+//           callSendAPIAny(sender_psid, byeResponse);
+//         }
+
+//     } else if (message.attachment) {
+//       callSendAPI(sender_psid, "Some Attachment");
+//     }
+
+//     // if( message && message.attachments && message.attachments[0].payload){
+//     //   callSendAPI(sender_psid, "Thank you");
+//     //   callSendAPIAny(sender_psid, godbyeGif);
+//     //   return;
+//     // }
+    
+//     // Specific replies
+   
+//     // if (res === "options") {
+//     //     callSendAPIAny(sender_psid, botOptions);
+//     // }
+//     // if(res === "hi" || res === "hello") {
+//     //     callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+//     //         setTimeout(function() {
+//     //             callSendAPI(sender_psid, "Please select an option below");
+//     //         } ,3000);
+//     // }
+
+
+    
+
+//     // if(entityChosen === "") {
+//     //   callSendAPI(sender_psid, "hello to");
+//     //     // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+//     //     // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
+//     // }
+// }
 
 module.exports = {
     postWebhook: postWebhook,
