@@ -33,6 +33,9 @@ let postWebhook = (req, res) =>{
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
+            if (webhook_event) {
+              callSendAPI(sender_psid, "Hello I am Deve! Nice to see you! How may I assist? - Please select the START button to Start a conversation")
+            }
             if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
             } else if (webhook_event.postback) {
@@ -280,15 +283,15 @@ function handleMessage(sender_psid, message) {
                 callSendAPI(sender_psid, "Please select an option below");
             } ,3000);
     } 
-    if (res === "options") {
-        callSendAPIAny(sender_psid, botOptions);
-    }
-    if(res === "hi" || res === "hello") {
-        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-            setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below");
-            } ,3000);
-    }
+    // if (res === "options") {
+    //     callSendAPIAny(sender_psid, botOptions);
+    // }
+    // if(res === "hi" || res === "hello") {
+    //     callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+    //         setTimeout(function() {
+    //             callSendAPI(sender_psid, "Please select an option below");
+    //         } ,3000);
+    // }
 
 
     entitiesArr.forEach((name) => {
@@ -299,8 +302,9 @@ function handleMessage(sender_psid, message) {
     });
 
     if(entityChosen === "") {
-        callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-        The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
+      callSendAPI(sender_psid, "hello to");
+        // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+        // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
     }
     else {
         
@@ -308,9 +312,9 @@ function handleMessage(sender_psid, message) {
             callSendAPI(sender_psid,`You 're welcome!`);
             callSendAPIAny(sender_psid, godbyeGif);
         }
-        if(entityChosen === "wit$bye"){
-            callSendAPIAny(sender_psid, byeRresponse);
-        }
+        // if(entityChosen === "wit$bye"){
+        //     callSendAPIAny(sender_psid, byeRresponse);
+        // }
     }
 }
 
