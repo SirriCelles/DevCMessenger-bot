@@ -237,11 +237,17 @@ function handleMessage(sender_psid, message) {
     let response 
     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
     let entityChosen = ""; 
-    if (typeof message === 'undefined' || typeof message.text === 'undefined') {
+    if( message && message.attachments && message.attachments[0].payload){
+      callSendAPI(sender_psid, "Thank you");
+      return;
+    }
+
+    if (typeof message.text === 'undefined' && typeof message === 'undefined') {
       response = {text: "Hi am Deve! Please select the START button to start a conversation"}
         callSendAPI(sender_psid, response);
         return; 
     } 
+    
     let res = transform(message.text);
     entitiesArr.forEach((name) => {
       let entity = firstTrait(message.nlp, name);
@@ -284,7 +290,7 @@ function handleMessage(sender_psid, message) {
         }
       }
       callSendAPI(sender_psid, {"text": "Thanks for visiting"});
-      callSendAPIAny(sender_psid, response);
+      callSendAPI(sender_psid, response);
     } 
     else {
       response = {"text": "The Bot needs More traing. Choose an option below to start a conversation"};
@@ -294,15 +300,9 @@ function handleMessage(sender_psid, message) {
     if (res === "options") {
       callSendAPI(sender_psid, {"text": `you choosed ${message.text}`});
     }
-    else if (message.attachment) {
-      callSendAPI(sender_psid, "Some Attachment");
-    }
+   
 
-    // if( message && message.attachments && message.attachments[0].payload){
-    //   callSendAPI(sender_psid, "Thank you");
-    //   callSendAPIAny(sender_psid, godbyeGif);
-    //   return;
-    // }
+    
     
     // Specific replies
    
