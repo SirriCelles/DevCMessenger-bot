@@ -33,7 +33,7 @@ let postWebhook = (req, res) =>{
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
-            if (webhook_event.message === undefined) {
+            if (webhook_event && (!webhook_event.message  || !webhook_event.message.text)) {
               callSendAPI(sender_psid, "Hello I am Deve! Nice to see you! How may I assist? - Please select the START button to Start a conversation")
             }else if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
@@ -269,28 +269,29 @@ function handleMessage(sender_psid, message) {
 
     if (message.text) {
       let res = transform(message.text);
+      callSendAPI(sender_psid, "hello");
 
-      entitiesArr.forEach((name) => {
-        let entity = firstTrait(message.nlp, name);
-        if (entity && entity.confidence > 0.6) {
-            entityChosen = name;
-        }
-      });
+      // entitiesArr.forEach((name) => {
+      //   let entity = firstTrait(message.nlp, name);
+      //   if (entity && entity.confidence > 0.6) {
+      //       entityChosen = name;
+      //   }
+      // });
 
-      if (entityChosen === "wit$greetings") {
-        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
-            setTimeout(function() {
-                callSendAPI(sender_psid, "Please select an option below");
-            } ,3000);
-      } 
-      else  if(entityChosen === "wit$thanks"){
-          callSendAPI(sender_psid,`You 're welcome!`);
-          // callSendAPIAny(sender_psid, godbyeGif);
-      }
-      else if(entityChosen === "wit$bye"){
-        callSendAPI(sender_psid, "Thanks for visiting");
-        // callSendAPIAny(sender_psid, byeResponse);
-      }
+      // if (entityChosen === "wit$greetings") {
+      //   callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
+      //       setTimeout(function() {
+      //           callSendAPI(sender_psid, "Please select an option below");
+      //       } ,3000);
+      // } 
+      // else  if(entityChosen === "wit$thanks"){
+      //     callSendAPI(sender_psid,`You 're welcome!`);
+      //     // callSendAPIAny(sender_psid, godbyeGif);
+      // }
+      // else if(entityChosen === "wit$bye"){
+      //   callSendAPI(sender_psid, "Thanks for visiting");
+      //   // callSendAPIAny(sender_psid, byeResponse);
+      // }
 
     } else if (message.attachment) {
       callSendAPIAny(sender_psid, "Some Attachment");
