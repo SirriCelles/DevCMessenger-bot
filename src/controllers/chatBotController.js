@@ -272,7 +272,7 @@ function handleMessage(sender_psid, message) {
 
       entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
-        if (entity && entity.confidence > 0.8) {
+        if (entity && entity.confidence > 0.6) {
             entityChosen = name;
         }
       });
@@ -288,7 +288,7 @@ function handleMessage(sender_psid, message) {
           callSendAPIAny(sender_psid, godbyeGif);
       }
       else if(entityChosen === "wit$bye"){
-        callSendAPIAny(sender_psid, byeRresponse);
+        callSendAPIAny(sender_psid, byeResponse);
       }
 
     } else if (message.attachment) {
