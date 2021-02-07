@@ -280,13 +280,11 @@ function handleMessage(sender_psid, message) {
       callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
           setTimeout(function() {
               callSendAPI(sender_psid, {"text": "Please select an option below"});
-              callSendAPI(sender_psid, )
+              callSendAPI(sender_psid, response);
           } ,3000);
     } 
     else  if(entityChosen === "wit$thanks"){
         callSendAPI(sender_psid, {"text": `You 're welcome!`});
-        response = 
-        callSendAPI(sender_psid);
     }
     else if(entityChosen === "wit$bye"){
       response = {
@@ -313,7 +311,7 @@ function handleMessage(sender_psid, message) {
       callSendAPI(sender_psid, response);
       return;
     } 
-    
+
     if (res === "options") {
       response = {
         "attachment":{
