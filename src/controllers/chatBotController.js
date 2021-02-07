@@ -258,11 +258,30 @@ function handleMessage(sender_psid, message) {
     });
 
     if (entityChosen === "wit$greetings") {
-      response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"}
-      callSendAPI(sender_psid, response);
-          // setTimeout(function() {
-          //     // callSendAPI(sender_psid, {"text": "Please select an option below"});
-          // } ,3000);
+      response = {
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"button",
+            "text":"See Options",
+            "buttons":[
+              {
+                "type":"text",
+                "title":"Yes"
+              },
+              {
+                "type":"text",
+                "title":"No"
+              }  
+            ]
+          }
+        }
+      }
+      callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
+          setTimeout(function() {
+              callSendAPI(sender_psid, {"text": "Please select an option below"});
+              callSendAPI(sender_psid, )
+          } ,3000);
     } 
     else  if(entityChosen === "wit$thanks"){
         callSendAPI(sender_psid, {"text": `You 're welcome!`});
@@ -284,7 +303,7 @@ function handleMessage(sender_psid, message) {
                 {
                   "type":"text",
                   "title":"byb bye"
-                }           
+                }         
                 ]
             }]
           }
@@ -292,8 +311,10 @@ function handleMessage(sender_psid, message) {
       }
       callSendAPI(sender_psid, {"text": "Thanks for visiting"});
       callSendAPI(sender_psid, response);
+      return;
     } 
-    else {
+    
+    if (res === "options") {
       response = {
         "attachment":{
           "type":"template",
@@ -361,31 +382,6 @@ function handleMessage(sender_psid, message) {
         callSendAPI(sender_psid, response);
       }, 2000);
     }
-    
-   
-
-    
-    
-    // Specific replies
-   
-    // if (res === "options") {
-    //     callSendAPIAny(sender_psid, botOptions);
-    // }
-    // if(res === "hi" || res === "hello") {
-    //     callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-    //         setTimeout(function() {
-    //             callSendAPI(sender_psid, "Please select an option below");
-    //         } ,3000);
-    // }
-
-
-    
-
-    // if(entityChosen === "") {
-    //   callSendAPI(sender_psid, "hello to");
-    //     // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-    //     // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-    // }
 }
 
 module.exports = {
