@@ -1,12 +1,6 @@
 'use strict';
 require("dotenv").config();
-import { resolve } from "path";
 import request from "request";
-
-
-const fs = require('fs');
-let rawdata = fs.readFileSync('response.json');
-let data = JSON.parse(rawdata);
 
 
 
@@ -86,9 +80,9 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": yes_res }
+    response = { "text": "yes" }
   } else if (payload === 'no') {
-    response = { "text": no_res }
+    response = { "text": "No" }
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -102,7 +96,7 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message":  response 
+    "message":  {"text": response}
   }
   console.log("request body" + JSON.stringify(request_body, null, 4));
 
