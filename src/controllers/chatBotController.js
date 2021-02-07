@@ -263,26 +263,46 @@ const godbyeGif = {
 
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
-    // id like button: sticker_id 369239263222822    
-    let res = transform(message.text);
+    // id like button: sticker_id 369239263222822   
+    let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+    let entityChosen = ""; 
 
-    const greeting = firstTrait(message.nlp, "wit$greetings");
-    let entitiesArr = ["wit$thanks", "wit$bye" ];
-    let entityChosen = "";
+    if (message.text) {
+      let res = transform(message.text);
 
-    if( message && message.attachments && message.attachments[0].payload){
-      callSendAPI(sender_psid, "Thank you");
-      callSendAPIAny(sender_psid, godbyeGif);
-      return;
-    }
-    
-    // Specific replies
-    if (greeting && greeting.confidence > 0.8) {
-        callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
+      entitiesArr.forEach((name) => {
+        let entity = firstTrait(message.nlp, name);
+        if (entity && entity.confidence > 0.8) {
+            entityChosen = name;
+        }
+      });
+
+      if (entityChosen === "wit$greetings") {
+        callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
             setTimeout(function() {
                 callSendAPI(sender_psid, "Please select an option below");
             } ,3000);
-    } 
+      } 
+      else  if(entityChosen === "wit$thanks"){
+          callSendAPI(sender_psid,`You 're welcome!`);
+          callSendAPIAny(sender_psid, godbyeGif);
+      }
+      else if(entityChosen === "wit$bye"){
+        callSendAPIAny(sender_psid, byeRresponse);
+      }
+
+    } else if (message.attachment) {
+      callSendAPIAny(sender_psid, "Some Attachment");
+    }
+
+    // if( message && message.attachments && message.attachments[0].payload){
+    //   callSendAPI(sender_psid, "Thank you");
+    //   callSendAPIAny(sender_psid, godbyeGif);
+    //   return;
+    // }
+    
+    // Specific replies
+   
     // if (res === "options") {
     //     callSendAPIAny(sender_psid, botOptions);
     // }
@@ -294,28 +314,13 @@ function handleMessage(sender_psid, message) {
     // }
 
 
-    entitiesArr.forEach((name) => {
-        let entity = firstTrait(message.nlp, name);
-        if (entity && entity.confidence > 0.8) {
-            entityChosen = name;
-        }
-    });
+    
 
-    if(entityChosen === "") {
-      callSendAPI(sender_psid, "hello to");
-        // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-        // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-    }
-    else {
-        
-        if(entityChosen === "wit$thanks"){
-            callSendAPI(sender_psid,`You 're welcome!`);
-            callSendAPIAny(sender_psid, godbyeGif);
-        }
-        // if(entityChosen === "wit$bye"){
-        //     callSendAPIAny(sender_psid, byeRresponse);
-        // }
-    }
+    // if(entityChosen === "") {
+    //   callSendAPI(sender_psid, "hello to");
+    //     // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
+    //     // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
+    // }
 }
 
 module.exports = {
