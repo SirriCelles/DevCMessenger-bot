@@ -33,7 +33,7 @@ let postWebhook = (req, res) =>{
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
-            if (webhook_event && (!webhook_event.message  || !webhook_event.message.text)) {
+            if (webhook_event && typeof webhook_event.message === 'undefined') {
               callSendAPI(sender_psid, "Hello I am Deve! Nice to see you! How may I assist? - Please select the START button to Start a conversation")
             }else if (webhook_event.message) {
                 handleMessage(sender_psid, webhook_event.message);
