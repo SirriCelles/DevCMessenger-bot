@@ -20,11 +20,7 @@ let postWebhook = (req, res) =>{
             console.log("WebHook_event: " + JSON.stringify(webhook_event, null, 4));
 
             // Get the sender PSID
-            let sender_psid = webhook_event.sender.id;
-            console.log('Sender PSID: ' + sender_psid);
-            console.log("Mesage from web hook: " + JSON.stringify(webhook_event.message, null, 4));
-            console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
-           
+            let sender_psid = webhook_event.sender.id;  
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
@@ -32,6 +28,10 @@ let postWebhook = (req, res) =>{
             } else if (webhook_event.postback) {
                 handlePostback(sender_psid, webhook_event.postback);
             }
+
+            console.log('Sender PSID: ' + sender_psid);
+            console.log("Mesage from web hook: " + JSON.stringify(webhook_event.message, null, 4));
+            console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
 
         });
 
@@ -268,7 +268,8 @@ function handleMessage(sender_psid, message) {
     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
     let entityChosen = ""; 
     if( message && message.attachments && message.attachments[0].payload){
-      callSendAPI(sender_psid, "Thank you");
+      response = {"text": "Thank you"};
+      callSendAPI(sender_psid, response);
       return;
     }
 
@@ -288,126 +289,23 @@ function handleMessage(sender_psid, message) {
       });
 
       if (entityChosen === "wit$greetings") {
-        response = {
-          "attachment":{
-            "type":"template",
-            "payload":{
-              "template_type":"button",
-              "text":"See Options",
-              "buttons":[
-                {
-                  "type":"text",
-                  "title":"Yes"
-                },
-                {
-                  "type":"text",
-                  "title":"No"
-                }  
-              ]
-            }
-          }
-        }
         callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
             setTimeout(function() {
                 callSendAPI(sender_psid, {"text": "Please select an option below"});
-                callSendAPI(sender_psid, response);
             } ,3000);
       } 
       else  if(entityChosen === "wit$thanks"){
           callSendAPI(sender_psid, {"text": `You 're welcome!`});
       }
       else if(entityChosen === "wit$bye"){
-        response = {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [
-                  {
-                "title": "Thanks for visiting!!",
-                "subtitle": "Fairwell till next time",
-                "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-                "buttons": [
-                  {
-                    "type":"text",
-                    "title":"byb bye"
-                  }         
-                  ]
-              }]
-            }
-          }
-        }
         callSendAPI(sender_psid, {"text": "Thanks for visiting"});
-        callSendAPI(sender_psid, response);
       } 
 
       if (res === "options") {
-        response = {
-          "attachment":{
-            "type":"template",
-            "payload":{
-              "template_type":"generic",
-              "elements":[
-                {
-                  "title":"Upcoming Events",
-                  "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
-                  "subtitle":"View Devc upcoming events",
-                  "default_action": {
-                    "type": "web_url",
-                    "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                    "webview_height_ratio": "tall",
-                  },
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                      "title":"View More"
-                    }           
-                  ]      
-                },
-                {
-                    "title":"DevC Games",
-                    "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
-                    "subtitle":"Join the game and win awesome rewards!",
-                    "default_action": {
-                      "type": "web_url",
-                      "url": "https://petersfancybrownhats.com/view?item=103",
-                      "webview_height_ratio": "tall",
-                    },
-                    "buttons":[
-                      {
-                        "type":"web_url",
-                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                        "title":"Check out"
-                      }            
-                    ]      
-                },
-                {
-                    "title":"Learning",
-                    "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
-                    "subtitle":"Looking to learn something New?",
-                    "default_action": {
-                      "type": "web_url",
-                      "url": "https://petersfancybrownhats.com/view?item=103",
-                      "webview_height_ratio": "tall",
-                    },
-                    "buttons":[
-                      {
-                        "type":"web_url",
-                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                        "title":"View Resources"
-                      }            
-                    ]      
-                  }
-      
-              ]
-            }
-          }
-        }
         callSendAPI(sender_psid, {"text": "The Bot needs More traing. Choose an option below to start a conversation"})
-        setTimeout(() => {
-          callSendAPI(sender_psid, response);
-        }, 2000);
+        // setTimeout(() => {
+        //   callSendAPI(sender_psid, response);
+        // }, 2000);
       }
     }
 }
