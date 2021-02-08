@@ -24,7 +24,7 @@ let postWebhook = (req, res) =>{
             console.log('Sender PSID: ' + sender_psid);
             console.log("Mesage from web hook: " + JSON.stringify(webhook_event.message, null, 4));
             console.log("Mesage Text: " + JSON.stringify(webhook_event.message.text, null, 4));
-
+           
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
@@ -96,7 +96,8 @@ function callSendAPI(sender_psid, response) {
     "recipient": {
       "id": sender_psid
     },
-    "message":  {"text": response}
+    "sender_action":"typing_on",
+    "message":  response
   }
   console.log("request body" + JSON.stringify(request_body, null, 4));
 
@@ -109,13 +110,14 @@ function callSendAPI(sender_psid, response) {
   }, (err, res, body) => {
     if (!err) {
       console.log('message sent!');
-      console.log(`Message Sent: ${response}`);
+      console.log('Message Sent: ' + JSON.stringify(response, null, 4));
     } else {
       console.error("Unable to send message:" + err);
     }
   }); 
 }
 
+<<<<<<< HEAD
 // send call with template
 // function callSendAPIAny(sender_psid, response) {
 //   // Construct the message body
@@ -145,6 +147,8 @@ function callSendAPI(sender_psid, response) {
 // }
 
 
+=======
+>>>>>>> 01ec85cec1eab907ff72227d3a245015bee5d4cc
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
@@ -153,218 +157,263 @@ function transform(message) {
     return message.toLowerCase();
 }
 
-const byeResponse = {
-    "attachment": {
-      "type": "template",
-      "payload": {
-        "template_type": "generic",
-        "elements": [
-            {
-          "title": "Thanks for visiting!!",
-          "subtitle": "Fairwell till next time",
-          "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-          "buttons": [
-            {
-              "type":"text",
-              "title":"byb bye"
-            }           
-            ]
-        }]
-      }
+let byeResponse = {
+  "attachment": {
+    "type": "template",
+    "payload": {
+      "template_type": "generic",
+      "elements": [
+          {
+        "title": "Thanks for visiting!!",
+        "subtitle": "Fairwell till next time",
+        "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+        "buttons": [
+          {
+            "type":"text",
+            "title":"byb bye"
+          }           
+          ]
+      }]
     }
+  }
 }
 
-const botOptions = {
-    "attachment":{
-        "type":"template",
-        "payload":{
-          "template_type":"generic",
-          "elements":[
-             {
-              "title":"Upcoming Events",
-              "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
-              "subtitle":"View Devc upcoming events",
+let botOptions = {
+  "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"generic",
+        "elements":[
+           {
+            "title":"Upcoming Events",
+            "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+            "subtitle":"View Devc upcoming events",
+            "default_action": {
+              "type": "web_url",
+              "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+              "webview_height_ratio": "tall",
+            },
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                "title":"View More"
+              }           
+            ]      
+          },
+          {
+              "title":"DevC Games",
+              "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+              "subtitle":"Join the game and win awesome rewards!",
               "default_action": {
                 "type": "web_url",
-                "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                "url": "https://petersfancybrownhats.com/view?item=103",
                 "webview_height_ratio": "tall",
               },
               "buttons":[
                 {
                   "type":"web_url",
                   "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                  "title":"View More"
-                }           
+                  "title":"Check out"
+                }            
               ]      
-            },
-            {
-                "title":"DevC Games",
-                "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
-                "subtitle":"Join the game and win awesome rewards!",
-                "default_action": {
-                  "type": "web_url",
-                  "url": "https://petersfancybrownhats.com/view?item=103",
-                  "webview_height_ratio": "tall",
-                },
-                "buttons":[
-                  {
-                    "type":"web_url",
-                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                    "title":"Check out"
-                  }            
-                ]      
-            },
-            {
-                "title":"Learning",
-                "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
-                "subtitle":"Looking to learn something New?",
-                "default_action": {
-                  "type": "web_url",
-                  "url": "https://petersfancybrownhats.com/view?item=103",
-                  "webview_height_ratio": "tall",
-                },
-                "buttons":[
-                  {
-                    "type":"web_url",
-                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
-                    "title":"View Resources"
-                  }            
-                ]      
-              }
-
-          ]
-        }
-    }
-}
-
-const godbyeGif = {
-    "attachment": {
-        "type": "template",
-        "payload": {
-            "template_type": "generic",
-            "elements": [
-            {
-                "url":"../public/images/goodbye.gif",
-                "subtitle":"View Devc upcoming events",
-                "buttons":[
-                    {
-                        "type": "wtext",
-                        "url": "none",
-                        "title": "Thanks For Visiting!!",
-                    }        
-                ]      
-            }]
-        }
-    }
-}
-
-function handleMessage(sender_psid, received_message) {
-  let response;
-  
-  // Checks if the message contains text
-  if (received_message.text) {    
-    // Create the payload for a basic text message, which
-    // will be added to the body of our request to the Send API
-    response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
-    }
-  } else if (received_message.attachments) {
-    // Get the URL of the message attachment
-    let attachment_url = received_message.attachments[0].payload.url;
-    response = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [{
-            "title": "Is this the right picture?",
-            "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
-            "buttons": [
-              {
-                "type": "postback",
-                "title": "Yes!",
-                "payload": "yes",
+          },
+          {
+              "title":"Learning",
+              "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+              "subtitle":"Looking to learn something New?",
+              "default_action": {
+                "type": "web_url",
+                "url": "https://petersfancybrownhats.com/view?item=103",
+                "webview_height_ratio": "tall",
               },
-              {
-                "type": "postback",
-                "title": "No!",
-                "payload": "no",
-              }
-            ],
+              "buttons":[
+                {
+                  "type":"web_url",
+                  "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                  "title":"View Resources"
+                }            
+              ]      
+            }
+
+        ]
+      }
+  }
+}
+
+let godbyeGif = {
+  "attachment": {
+      "type": "template",
+      "payload": {
+          "template_type": "generic",
+          "elements": [
+          {
+              "url":"../public/images/goodbye.gif",
+              "subtitle":"View Devc upcoming events",
+              "buttons":[
+                  {
+                      "type": "wtext",
+                      "url": "none",
+                      "title": "Thanks For Visiting!!",
+                  }        
+              ]      
           }]
+      }
+  }
+}
+
+
+
+function handleMessage(sender_psid, message) {
+    //handle message for react, like press like button
+    // id like button: sticker_id 369239263222822  
+    let response 
+    let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
+    let entityChosen = ""; 
+    if( message && message.attachments && message.attachments[0].payload){
+      callSendAPI(sender_psid, "Thank you");
+      return;
+    }
+
+    if (typeof message.text === 'undefined' && typeof message === 'undefined') {
+      response = {text: "Hi am Deve! Please select the START button to start a conversation"}
+        callSendAPI(sender_psid, response);
+        return; 
+    }
+    
+    if (message.text) {
+        let res = transform(message.text);
+        entitiesArr.forEach((name) => {
+        let entity = firstTrait(message.nlp, name);
+        if (entity && entity.confidence > 0.6) {
+            entityChosen = name;
         }
+      });
+
+      if (entityChosen === "wit$greetings") {
+        response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"button",
+              "text":"See Options",
+              "buttons":[
+                {
+                  "type":"text",
+                  "title":"Yes"
+                },
+                {
+                  "type":"text",
+                  "title":"No"
+                }  
+              ]
+            }
+          }
+        }
+        callSendAPI(sender_psid, {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"});
+            setTimeout(function() {
+                callSendAPI(sender_psid, {"text": "Please select an option below"});
+                callSendAPI(sender_psid, response);
+            } ,3000);
+      } 
+      else  if(entityChosen === "wit$thanks"){
+          callSendAPI(sender_psid, {"text": `You 're welcome!`});
+      }
+      else if(entityChosen === "wit$bye"){
+        response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [
+                  {
+                "title": "Thanks for visiting!!",
+                "subtitle": "Fairwell till next time",
+                "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+                "buttons": [
+                  {
+                    "type":"text",
+                    "title":"byb bye"
+                  }         
+                  ]
+              }]
+            }
+          }
+        }
+        callSendAPI(sender_psid, {"text": "Thanks for visiting"});
+        callSendAPI(sender_psid, response);
+      } 
+
+      if (res === "options") {
+        response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"generic",
+              "elements":[
+                {
+                  "title":"Upcoming Events",
+                  "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+                  "subtitle":"View Devc upcoming events",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                    "webview_height_ratio": "tall",
+                  },
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                      "title":"View More"
+                    }           
+                  ]      
+                },
+                {
+                    "title":"DevC Games",
+                    "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+                    "subtitle":"Join the game and win awesome rewards!",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                        "title":"Check out"
+                      }            
+                    ]      
+                },
+                {
+                    "title":"Learning",
+                    "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+                    "subtitle":"Looking to learn something New?",
+                    "default_action": {
+                      "type": "web_url",
+                      "url": "https://petersfancybrownhats.com/view?item=103",
+                      "webview_height_ratio": "tall",
+                    },
+                    "buttons":[
+                      {
+                        "type":"web_url",
+                        "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                        "title":"View Resources"
+                      }            
+                    ]      
+                  }
+      
+              ]
+            }
+          }
+        }
+        callSendAPI(sender_psid, {"text": "The Bot needs More traing. Choose an option below to start a conversation"})
+        setTimeout(() => {
+          callSendAPI(sender_psid, response);
+        }, 2000);
       }
     }
-  } 
-  
-  // Send the response message
-  callSendAPI(sender_psid, response);    
 }
-
-
-// function handleMessage(sender_psid, message) {
-//     //handle message for react, like press like button
-//     // id like button: sticker_id 369239263222822   
-//     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
-//     let entityChosen = ""; 
-//     if (typeof message === 'undefined' || typeof message.text === 'undefined') {
-//         callSendAPI(sender_psid, "Hi am Deve! Please select the START button to start a conversation");
-//     } else if (message.text) {
-//         let res = transform(message.text);
-//         entitiesArr.forEach((name) => {
-//           let entity = firstTrait(message.nlp, name);
-//           if (entity && entity.confidence > 0.6) {
-//               entityChosen = name;
-//           }
-//         });
-
-//         if (entityChosen === "wit$greetings") {
-//           callSendAPI(sender_psid, "Hi there! Welcome to DevC Chat page how can I assist You,");
-//               setTimeout(function() {
-//                   callSendAPI(sender_psid, "Please select an option below");
-//               } ,3000);
-//         } 
-//         else  if(entityChosen === "wit$thanks"){
-//             callSendAPI(sender_psid,`You 're welcome!`);
-//             callSendAPIAny(sender_psid, godbyeGif);
-//         }
-//         else if(entityChosen === "wit$bye"){
-//           callSendAPI(sender_psid, "Thanks for visiting");
-//           callSendAPIAny(sender_psid, byeResponse);
-//         }
-
-//     } else if (message.attachment) {
-//       callSendAPI(sender_psid, "Some Attachment");
-//     }
-
-//     // if( message && message.attachments && message.attachments[0].payload){
-//     //   callSendAPI(sender_psid, "Thank you");
-//     //   callSendAPIAny(sender_psid, godbyeGif);
-//     //   return;
-//     // }
-    
-//     // Specific replies
-   
-//     // if (res === "options") {
-//     //     callSendAPIAny(sender_psid, botOptions);
-//     // }
-//     // if(res === "hi" || res === "hello") {
-//     //     callSendAPI(sender_psid, "Hi there! I'm Deve!. Welcome to DevC Chat page how can I assist You,");
-//     //         setTimeout(function() {
-//     //             callSendAPI(sender_psid, "Please select an option below");
-//     //         } ,3000);
-//     // }
-
-
-    
-
-//     // if(entityChosen === "") {
-//     //   callSendAPI(sender_psid, "hello to");
-//     //     // callSendAPI(sender_psid, `Am Sorry I can't process this information right now. 
-//     //     // The bot is needed more training, try to say "thanks a lot" or "hi" or "options" to the bot.`);
-//     // }
-// }
 
 module.exports = {
     postWebhook: postWebhook,
