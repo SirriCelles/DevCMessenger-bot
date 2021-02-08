@@ -141,13 +141,12 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
-      setTimeout(callSendAPIWithButtons(sender_psid), 200);
+      callSendAPIWithButtons(sender_psid);
     } else if (bye && bye.confidence > 0.8) {
       // response = {"text": "Thanks for visiting!"};
       callSendAPIWithBye(sender_psid);
     }else if (thanks && thanks.confidence > 0.8) {
       response = {"text": `You 're welcome!`}
-      callSendAPIWithBye(sender_psid);
     }else if (res === 'options') {
       response = botOptions;
     }
@@ -199,35 +198,32 @@ let callSendAPIWithBye = (sender_psid) => {
         "type": "template",
         "payload": {
           "template_type": "generic",
-          "elements": [
-              {
-            "title": "Thanks for visiting!!",
-            "subtitle": "Fairwell till next time",
-            "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-            "buttons": [
-              {
+          "elements": [{
+                "title": "Thanks for visiting!!",
+                "subtitle": "Fairwell till next time",
+                "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+                "buttons": [{
                 "type":"text",
                 "title":"byb bye"
-              }           
-              ]
+              }]
           }]
         }
       }
     }
-};
+  };
 
-request({
-    "uri": "https://graph.facebook.com/v6.0/me/messages",
-    "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN},
-    "method": "POST",
-    "json": body
-}, (err, res, body) => {
-    if (!err) {
-        console.log('message sent!')
-    } else {
-        console.error("Unable to send message:" + err);
-    }
-});
+  request({
+      "uri": "https://graph.facebook.com/v6.0/me/messages",
+      "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN},
+      "method": "POST",
+      "json": body
+  }, (err, res, body) => {
+      if (!err) {
+          console.log('message sent!')
+      } else {
+          console.error("Unable to send message:" + err);
+      }
+  });
 }
 
 
