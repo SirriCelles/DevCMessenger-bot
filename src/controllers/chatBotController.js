@@ -143,7 +143,7 @@ function handleMessage(sender_psid, received_message) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
       callSendAPIWithButtons(sender_psid);
     }else if (bye && bye.confidence > 0.8) {
-      // response = {"text": "Thanks for visiting!"};
+      response = {"text": "Thanks for visiting!"};
       callSendAPIWithBye(sender_psid);
     }else if (thanks && thanks.confidence > 0.8) {
       response = {"text": `You 're welcome!`}
