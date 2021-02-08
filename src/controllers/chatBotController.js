@@ -264,6 +264,7 @@ let godbyeGif = {
 function handleMessage(sender_psid, message) {
     //handle message for react, like press like button
     // id like button: sticker_id 369239263222822  
+    console.log("In The handle message");
     let response 
     let entitiesArr = ["wit$greetings","wit$thanks", "wit$bye" ];
     let entityChosen = ""; 
@@ -280,6 +281,7 @@ function handleMessage(sender_psid, message) {
     }
     
     if (message.text) {
+      console.log("in the handle Text function");
         let res = transform(message.text);
         entitiesArr.forEach((name) => {
         let entity = firstTrait(message.nlp, name);
