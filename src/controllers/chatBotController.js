@@ -142,13 +142,13 @@ function handleMessage(sender_psid, received_message) {
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
       callSendAPIWithButtons(sender_psid);
-    } else if (bye && bye.confidence > 0.8) {
+    }else if (bye && bye.confidence > 0.8) {
       // response = {"text": "Thanks for visiting!"};
       callSendAPIWithBye(sender_psid);
     }else if (thanks && thanks.confidence > 0.8) {
       response = {"text": `You 're welcome!`}
     }else if (res === 'options') {
-      response = botOptions;
+      callSendAPIWithOptions(sender_psid);
     }
     else {
       response = {"text": `The bot needs more training. Enter 'options' to see avaible updates`};
@@ -199,13 +199,13 @@ let callSendAPIWithBye = (sender_psid) => {
         "payload": {
           "template_type": "generic",
           "elements": [{
-                "title": "Thanks for visiting!!",
-                "subtitle": "Fairwell till next time",
-                "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
-                "buttons": [{
-                "type":"text",
-                "title":"byb bye"
-              }]
+            "title": "Thanks for visiting!!",
+            "subtitle": "Fairwell till next time",
+            "image_url": "http://www.i2symbol.com/pictures/emojis/c/4/5/8/c4585f90987032bfec956f446f754968_384.png",
+            "buttons": [{
+              "type":"text",
+              "title":"byb bye"
+            }]
           }]
         }
       }
