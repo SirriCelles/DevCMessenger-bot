@@ -123,7 +123,7 @@ function handleMessage(sender_psid, received_message) {
 
   if( received_message && received_message.attachments && received_message.attachments[0].payload){
     callSendAPI(sender_psid, "Thank you for watching my video!!!");
-    callSendAPIWithTemplate(sender_psid);
+    callSendAPIWithOptions(sender_psid);
     return;
   }
 
