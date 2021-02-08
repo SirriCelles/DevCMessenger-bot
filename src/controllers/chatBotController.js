@@ -83,7 +83,6 @@ function handlePostback(sender_psid, received_postback) {
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
-
 }
 
 // Sends response messages via the Send API
@@ -121,6 +120,12 @@ function firstTrait(nlp, name) {
 
 function handleMessage(sender_psid, received_message) {
   let response;
+
+  if( message && message.attachments && message.attachments[0].payload){
+    callSendAPI(sender_psid, "Thank you for watching my video !!!");
+    callSendAPIWithTemplate(sender_psid);
+    return;
+  }
   
   if (typeof received_message.text === 'undefined' && typeof received_message === 'undefined') {
     response = {"text": `Hi am Deve! Please select the START button to start a conversation`};
@@ -135,7 +140,6 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
-      callSendAPIWithTemplate(sender_psid);
       // setTimeout(callSendAPI(sender_psid, {"text": `Please enter 'options' to view available options`}), 2000);
     } else if (bye && bye.confidence > 0.8) {
       response = {"text": "Thanks for visiting!"};
