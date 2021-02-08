@@ -113,16 +113,38 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
+
+function firstTrait(nlp, name) {
+  return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
+}
+
 function handleMessage(sender_psid, received_message) {
   let response;
   
+  if (typeof message.text === 'undefined' && typeof message === 'undefined') {
+    response = {"text": `Hi am Deve! Please select the START button to start a conversation`};
+  } 
   // Checks if the message contains text
   if (received_message.text) {    
     // Create the payload for a basic text message, which
     // will be added to the body of our request to the Send API
-    response = {
-      "text": `You sent the message: "${received_message.text}". Now send me an attachment!`
+    let res = received_message.text.toLowerCase();
+    const greeting = firstTrait(received_message.nlp, 'wit$greetings');
+    const bye = firstTrait(received_message.nlp, 'wit$bye');
+    const thanks = firstTrait(received_message.nlp, 'wit$thanks');
+    if (greeting && greeting.confidence > 0.8) {
+      response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
+    } else if (bye && bye.confidence > 0.8) {
+      response = {"text": "Thanks for visiting!"};
+    }else if (thanks && thanks.confidence > 0.8) {
+      response = {"text": `You 're welcome!`}
+    }else if (res === 'options') {
+      response = {"text": `You entered ${received_message.text}`};
     }
+    else {
+      response = {"text": `The bot needs more training. Enter 'options' to see avaible updates`};
+    }    
+
   } else if (received_message.attachments) {
     // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
