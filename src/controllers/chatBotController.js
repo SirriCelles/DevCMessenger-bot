@@ -77,9 +77,9 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "yes. Great!" }
+    callSendAPIWithOptions(sender_psid);
   } else if (payload === 'no') {
-    response = { "text": "No" }
+    response = { "text": `You selected "No"` }
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -141,8 +141,7 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
-      callSendAPIWithTemplate(sender_psid);
-      // setTimeout(callSendAPI(sender_psid, {"text": `Please enter 'options' to view available options`}), 2000);
+      callSendAPIWithButtons(sender_psid);
     } else if (bye && bye.confidence > 0.8) {
       response = {"text": "Thanks for visiting!"};
     }else if (thanks && thanks.confidence > 0.8) {
@@ -189,7 +188,49 @@ function handleMessage(sender_psid, received_message) {
   callSendAPI(sender_psid, response);    
 }
 
-let callSendAPIWithTemplate = (sender_psid) => {
+let callSendAPIWithButtons = (sender_psid) => {
+    let body = {
+      "recipient": {
+          "id": sender_psid
+      },
+      "message": {
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"button",
+            "text":"Want to get Updates??",
+            "buttons":[
+              {
+                "type": "postback",
+                "title": "Yes! View More",
+                "payload": "yes",
+              },
+              {
+                "type": "postback",
+                "title": "No!",
+                "payload": "no",
+              }
+            ]
+          }
+        }        
+      }
+  };
+
+  request({
+      "uri": "https://graph.facebook.com/v6.0/me/messages",
+      "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN},
+      "method": "POST",
+      "json": body
+  }, (err, res, body) => {
+      if (!err) {
+          console.log('message sent!')
+      } else {
+          console.error("Unable to send message:" + err);
+      }
+  });
+}
+
+let callSendAPIWithOptions = (sender_psid) => {
   // document fb message template
   // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
   let body = {
@@ -339,27 +380,7 @@ let botOptions = {
 };
 
 
-// response = {
-//   "attachment":{
-//     "type":"template",
-//     "payload":{
-//       "template_type":"button",
-//       "text":"Want to get Updates??",
-//       "buttons":[
-//         {
-//           "type": "postback",
-//           "title": "Yes! View More",
-//           "payload": "yes",
-//         },
-//         {
-//           "type": "postback",
-//           "title": "No!",
-//           "payload": "no",
-//         }
-//       ]
-//     }
-//   }
-// };
+
 
 
 
