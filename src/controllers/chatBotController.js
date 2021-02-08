@@ -17,7 +17,7 @@ let postWebhook = (req, res) =>{
 
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
-            console.log("WebHook_event: " + JSON.stringify(webhook_event, null, 4));
+            console.log("WebHook_event: " + JSON.stringify(webhook_event));
 
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;  
@@ -114,6 +114,23 @@ function callSendAPI(sender_psid, response) {
       console.error("Unable to send message:" + err);
     }
   }); 
+}
+
+function handleMessage(sender_psid, received_message) {
+
+  let response;
+
+  // Check if the message contains text
+  if (received_message.text) {    
+
+    // Create the payload for a basic text message
+    response = {
+      "text": `You sent the message: "${received_message.text}". Now send me an image!`
+    }
+  }  
+  
+  // Sends the response message
+  callSendAPI(sender_psid, response);    
 }
 
 
