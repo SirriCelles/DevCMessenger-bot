@@ -117,7 +117,6 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-<<<<<<< HEAD
 // send call with template
 // function callSendAPIAny(sender_psid, response) {
 //   // Construct the message body
@@ -147,8 +146,6 @@ function callSendAPI(sender_psid, response) {
 // }
 
 
-=======
->>>>>>> 01ec85cec1eab907ff72227d3a245015bee5d4cc
 function firstTrait(nlp, name) {
     return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
