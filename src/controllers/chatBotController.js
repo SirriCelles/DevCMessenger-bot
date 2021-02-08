@@ -141,9 +141,10 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
-      callSendAPIWithButtons(sender_psid);
+      setTimeout(callSendAPIWithButtons(sender_psid), 200);
     } else if (bye && bye.confidence > 0.8) {
-      response = {"text": "Thanks for visiting!"};
+      // response = {"text": "Thanks for visiting!"};
+      callSendAPIWithBye(sender_psid);
     }else if (thanks && thanks.confidence > 0.8) {
       response = {"text": `You 're welcome!`}
       callSendAPIWithBye(sender_psid);
@@ -152,7 +153,6 @@ function handleMessage(sender_psid, received_message) {
     }
     else {
       response = {"text": `The bot needs more training. Enter 'options' to see avaible updates`};
-
     }    
 
   } else if (received_message.attachments) {
@@ -198,22 +198,22 @@ let callSendAPIWithBye = (sender_psid) => {
       "attachment": {
         "type": "template",
         "payload": {
-            "template_type": "generic",
-            "elements": [
-            {
-                "url":"../public/images/goodbye.gif",
-                "subtitle":"View Devc upcoming events",
-                "buttons":[
-                    {
-                        "type": "wtext",
-                        "url": "none",
-                        "title": "Thanks For Visiting!!",
-                    }        
-                ]      
-            }]
+          "template_type": "generic",
+          "elements": [
+              {
+            "title": "Thanks for visiting!!",
+            "subtitle": "Fairwell till next time",
+            "image_url": "https://miro.medium.com/max/1875/1*xJb0gDyM5kwN3oJht--tNg.jpeg",
+            "buttons": [
+              {
+                "type":"text",
+                "title":"byb bye"
+              }           
+              ]
+          }]
         }
+      }
     }
-  }
 };
 
 request({
