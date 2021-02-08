@@ -121,7 +121,7 @@ function firstTrait(nlp, name) {
 function handleMessage(sender_psid, received_message) {
   let response;
 
-  if( message && message.attachments && message.attachments[0].payload){
+  if( received_message && received_message.attachments && received_message.attachments[0].payload){
     callSendAPI(sender_psid, "Thank you for watching my video !!!");
     callSendAPIWithTemplate(sender_psid);
     return;
