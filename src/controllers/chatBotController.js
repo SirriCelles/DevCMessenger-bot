@@ -122,14 +122,15 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   if( received_message && received_message.attachments && received_message.attachments[0].payload){
-    callSendAPI(sender_psid, "Thank you for watching my video !!!");
+    callSendAPI(sender_psid, "Thank you for watching my video!!!");
     callSendAPIWithTemplate(sender_psid);
     return;
   }
-  
+
   if (typeof received_message.text === 'undefined' && typeof received_message === 'undefined') {
     response = {"text": `Hi am Deve! Please select the START button to start a conversation`};
   } 
+  
   // Checks if the message contains text
   if (received_message.text) {    
     // Create the payload for a basic text message, which
@@ -140,6 +141,7 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
+      callSendAPIWithTemplate(sender_psid);
       // setTimeout(callSendAPI(sender_psid, {"text": `Please enter 'options' to view available options`}), 2000);
     } else if (bye && bye.confidence > 0.8) {
       response = {"text": "Thanks for visiting!"};
@@ -150,6 +152,7 @@ function handleMessage(sender_psid, received_message) {
     }
     else {
       response = {"text": `The bot needs more training. Enter 'options' to see avaible updates`};
+
     }    
 
   } else if (received_message.attachments) {
@@ -194,26 +197,67 @@ let callSendAPIWithTemplate = (sender_psid) => {
           "id": sender_psid
       },
       "message": {
-          "attachment": {
-              "type": "template",
-              "payload": {
-                  "template_type": "generic",
-                  "elements": [
-                      {
-                          "title": "Want to build sth awesome?",
-                          "image_url": "https://www.nexmo.com/wp-content/uploads/2018/10/build-bot-messages-api-768x384.png",
-                          "subtitle": "Watch more videos on my youtube channel ^^",
-                          "buttons": [
-                              {
-                                  "type": "web_url",
-                                  "url": "https://bit.ly/subscribe-haryphamdev",
-                                  "title": "Watch now"
-                              }
-                          ]
-                      }
-                  ]
-              }
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"generic",
+            "elements":[
+               {
+                "title":"Upcoming Events",
+                "image_url":"https://zepstra.com/wp-content/uploads/2018/01/Zepstra-CEO-Franklin-Fotang-at-Facebook-Developers-Circle-Buea-1080x550.jpg",
+                "subtitle":"View Devc upcoming events",
+                "default_action": {
+                  "type": "web_url",
+                  "url": "https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                  "webview_height_ratio": "tall",
+                },
+                "buttons":[
+                  {
+                    "type":"web_url",
+                    "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                    "title":"View More"
+                  }           
+                ]      
+              },
+              {
+                  "title":"DevC Games",
+                  "image_url":"https://i1.wp.com/www.afrohustler.com/wp-content/uploads/2019/12/67578380_2342835202466229_8432976811758977024_o.jpg?resize=800%2C533&ssl=1",
+                  "subtitle":"Join the game and win awesome rewards!",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://petersfancybrownhats.com/view?item=103",
+                    "webview_height_ratio": "tall",
+                  },
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                      "title":"Check out"
+                    }            
+                  ]      
+              },
+              {
+                  "title":"Learning",
+                  "image_url":"https://miro.medium.com/max/875/1*RUlaYnEKIq4W1wXhaV8IPw.jpeg",
+                  "subtitle":"Looking to learn something New?",
+                  "default_action": {
+                    "type": "web_url",
+                    "url": "https://petersfancybrownhats.com/view?item=103",
+                    "webview_height_ratio": "tall",
+                  },
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://www.activspaces.com/programs/community/groups/facebook-developers-circle-buea/",
+                      "title":"View Resources"
+                    }            
+                  ]      
+                }
+    
+            ]
           }
+      }
+          
       }
   };
 
