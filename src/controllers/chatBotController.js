@@ -117,32 +117,32 @@ function callSendAPI(sender_psid, response) {
 }
 
 // send call with template
-function callSendAPIAny(sender_psid, response) {
-  // Construct the message body
-let request_body = {
-  "recipient": {
-    "id": sender_psid
-  },
-  "message":  response
-}
-console.log("request body" + JSON.stringify(request_body, null, 4));
+// function callSendAPIAny(sender_psid, response) {
+//   // Construct the message body
+// let request_body = {
+//   "recipient": {
+//     "id": sender_psid
+//   },
+//   "message":  response
+// }
+// console.log("request body" + JSON.stringify(request_body, null, 4));
 
-// Send the HTTP request to the Messenger Platform
-request({
-  "uri": "https://graph.facebook.com/v9.0/me/messages",
-  "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
-  "method": "POST",
-  "json": request_body
-}, (err, res, body) => {
-  if (!err) {
-    console.log('message sent!');
-    console.log(`Message Sent: ${response}`);
-  } else {
-    console.error("Unable to send message:" + err);
-  }
-}); 
+// // Send the HTTP request to the Messenger Platform
+// request({
+//   "uri": "https://graph.facebook.com/v9.0/me/messages",
+//   "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN },
+//   "method": "POST",
+//   "json": request_body
+// }, (err, res, body) => {
+//   if (!err) {
+//     console.log('message sent!');
+//     console.log(`Message Sent: ${response}`);
+//   } else {
+//     console.error("Unable to send message:" + err);
+//   }
+// }); 
 
-}
+// }
 
 
 function firstTrait(nlp, name) {
