@@ -118,6 +118,7 @@ function firstTrait(nlp, name) {
   return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
+
 function handleMessage(sender_psid, received_message) {
   let response;
   
@@ -134,7 +135,7 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
-      setTimeout(() => {
+      setTimeout(function() {
         response = {
           "attachment":{
             "type":"template",
@@ -155,8 +156,8 @@ function handleMessage(sender_psid, received_message) {
               ]
             }
           }
-        }
-      }, 200);
+        };
+      }, 2000);
     } else if (bye && bye.confidence > 0.8) {
       response = {"text": "Thanks for visiting!"};
     }else if (thanks && thanks.confidence > 0.8) {
