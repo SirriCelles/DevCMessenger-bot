@@ -77,7 +77,7 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "yes" }
+    response = { "text": "yes. Great!" }
   } else if (payload === 'no') {
     response = { "text": "No" }
   }
@@ -134,6 +134,29 @@ function handleMessage(sender_psid, received_message) {
     const thanks = firstTrait(received_message.nlp, 'wit$thanks');
     if (greeting && greeting.confidence > 0.8) {
       response = {"text": "Hi there! Welcome to DevC Chat page how can I assist You?"};
+      setTimeout(() => {
+        response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type":"button",
+              "text":"Want to get Updates??",
+              "buttons":[
+                {
+                  "type": "postback",
+                  "title": "Yes! View More",
+                  "payload": "yes",
+                },
+                {
+                  "type": "postback",
+                  "title": "No!",
+                  "payload": "no",
+                }
+              ]
+            }
+          }
+        }
+      }, 200);
     } else if (bye && bye.confidence > 0.8) {
       response = {"text": "Thanks for visiting!"};
     }else if (thanks && thanks.confidence > 0.8) {
