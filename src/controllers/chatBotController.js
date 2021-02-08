@@ -146,6 +146,7 @@ function handleMessage(sender_psid, received_message) {
       response = {"text": "Thanks for visiting!"};
     }else if (thanks && thanks.confidence > 0.8) {
       response = {"text": `You 're welcome!`}
+      callSendAPIWithBye(sender_psid);
     }else if (res === 'options') {
       response = botOptions;
     }
@@ -187,6 +188,48 @@ function handleMessage(sender_psid, received_message) {
   // Send the response message
   callSendAPI(sender_psid, response);    
 }
+
+let callSendAPIWithBye = (sender_psid) => {
+  let body = {
+    "recipient": {
+        "id": sender_psid
+    },
+    "message": {
+      "attachment": {
+        "type": "template",
+        "payload": {
+            "template_type": "generic",
+            "elements": [
+            {
+                "url":"../public/images/goodbye.gif",
+                "subtitle":"View Devc upcoming events",
+                "buttons":[
+                    {
+                        "type": "wtext",
+                        "url": "none",
+                        "title": "Thanks For Visiting!!",
+                    }        
+                ]      
+            }]
+        }
+    }
+  }
+};
+
+request({
+    "uri": "https://graph.facebook.com/v6.0/me/messages",
+    "qs": { "access_token": process.env.DEVC_CHATBOT_PAGE_TOKEN},
+    "method": "POST",
+    "json": body
+}, (err, res, body) => {
+    if (!err) {
+        console.log('message sent!')
+    } else {
+        console.error("Unable to send message:" + err);
+    }
+});
+}
+
 
 let callSendAPIWithButtons = (sender_psid) => {
     let body = {
