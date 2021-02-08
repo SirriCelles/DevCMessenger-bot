@@ -121,7 +121,7 @@ function firstTrait(nlp, name) {
 function handleMessage(sender_psid, received_message) {
   let response;
   
-  if (typeof message.text === 'undefined' && typeof message === 'undefined') {
+  if (typeof received_message.text === 'undefined' && typeof received_message === 'undefined') {
     response = {"text": `Hi am Deve! Please select the START button to start a conversation`};
   } 
   // Checks if the message contains text
